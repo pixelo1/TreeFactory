@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
+  <display-name>treefactory</display-name>
+  <welcome-file-list>
+    <welcome-file>index.do</welcome-file>
+  </welcome-file-list>
+  
+     <servlet>
+  <description>DisPacherServlet</description>
+  <servlet-name>dispacherServlet</servlet-name>
+  <servlet-class>com.treefactory.main.DisPacherServlet</servlet-class>
+  <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <!-- 확장자 기반의 url 패턴 지정 localhost 다음에 .do 만 붙이면 매핑이된다 -->
+	<servlet-mapping>
+		<servlet-name>dispacherServlet</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+  
+  <!-- 필터 선언한 것은 위에서 아래로 적용이된다. 
+  <filter>
+   <description>권한처리</description>
+   <filter-name>authority</filter-name>
+   <filter-class>com.treefactory.util.filter.AuthorityFilter</filter-class>
+  </filter>
+  <filter-mapping>
+   <filter-name>authority</filter-name>
+   <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+  -->
+  
+  <!-- 필터 선언한 것은 위에서 아래로 적용이된다. -->
+  <filter>
+   <description>한글 처리 필터</description>
+   <filter-name>encoding</filter-name>
+   <filter-class>com.treefactory.util.filter.EncodingFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>encoding</filter-name>
+  	<url-pattern>*.do</url-pattern>
+  </filter-mapping>
+  
+  
+  <filter>
+  <!-- 가능하면 맨에래에 출력되게 한다 -->
+   <description>설명 : 사이트 레이아웃을 잡는 필터 처리
+   	-필터로 등록이 되면 sitemesh 설정 파일을 찾는다. -> /WEB-INF/sitemesh.xml 을 찾는다
+   </description>
+   <filter-name>sitemesh</filter-name>
+   <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  <!-- 매핑으로 name 지정하면 filter 태그안의 같은 name 을 실행한다 -->
+	<filter-name>sitemesh</filter-name>
+	<url-pattern>*.do</url-pattern>
+  </filter-mapping>
+  
+  <!-- 전체적으로 잡을때는 jsp 안에서 page 디렉티브 태그 안에 선언된 errorPage가 가장 우선 적용 -> error-type이 적용 -> error-code가 적용 -->
+  <error-page>
+  	<error-code>404</error-code>
+  	<location>/error/404Error.do</location>
+  </error-page>
+  
+  <error-page>
+  	<error-code>500</error-code>
+  	<location>/error/500Error.do</location>
+  </error-page>
+</web-app>

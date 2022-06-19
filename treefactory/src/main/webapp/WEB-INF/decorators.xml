@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE XML>
+<!-- 작성자 : 이영환 -->
+<!-- 작성일 : 2020-06-03 -->
+<!-- 꾸미기(레이아웃)에 대한 선언  기본폴더 설정-->
+<decorators defaultdir="/WEB-INF/views/decorator">
+	<!-- hello에 대한 요청이 들어오면 적용시키는 레이아웃 선언 / 주로 사용 -->
+	<decorator name="main" page="default_decorator.jsp">
+		<pattern>/main/*</pattern>
+		<pattern>/board/*</pattern>
+		<pattern>/notice/*</pattern>
+		<pattern>/image/*</pattern>
+		<pattern>/member/*</pattern>
+<!-- 		실행되다가 시스템의 Exception을 잡지 못한다. 논리(권한) 예외, 의도된 예외만 잡는다. -->
+		<pattern>/error/*</pattern>
+	</decorator>
+	
+<!-- 	<decorator name="admin" page="admin_decorator.jsp"> -->
+<!-- 		<pattern>/admin/*</pattern> -->
+<!-- 	</decorator> -->
+	<!-- 게시판의 대한 요청 레이아웃 선언 -->
+
+	<!-- 데코레이션에서 제외되는 요청을 선언 -->
+
+</decorators>
