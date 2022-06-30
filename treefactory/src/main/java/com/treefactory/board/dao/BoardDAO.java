@@ -272,7 +272,7 @@ public class BoardDAO {
 			con = DB.getConnection();
 //			System.out.println("DB 연결 완료");
 			// 3. sql 작성 - 변경되는 데이터는 ? (대체문자)로 작성
-			String sql = " select id,to_char(writeDate, 'yyyy-mm-dd') writeDate, updateDate, no, category, title, content, rec, hit "
+			String sql = " select id,to_char(writeDate, 'yyyy-mm-dd') writeDate, updateDate, no, category, title, content, fileName, rec, hit "
 					+ " FROM board WHERE no = ?";
 			// 4. 실행 객체 & 데이터세팅 - no
 			pstmt = con.prepareStatement(sql);
@@ -294,6 +294,7 @@ public class BoardDAO {
 				vo.setCategory(rs.getString("category"));
 				vo.setTitle(rs.getString("title"));
 				vo.setContent(rs.getString("content"));
+				vo.setFileName(rs.getString("fileName"));
 				vo.setRec(rs.getLong("rec"));
 				vo.setHit(rs.getLong("hit"));
 				
@@ -385,13 +386,21 @@ public class BoardDAO {
 			con = DB.getConnection();
 //			System.out.println("연결 완료");
 			// 3. SQL 작성
-			String sql = "UPDATE board SET title = ?, content = ?, id = ? WHERE no = ?";
+			String sql = " UPDATE board SET title = ?, content = ?, id = ? ";
+				
+			if(vo.getFileName() != null)sql += " , fileName = ? ";
+
+					
+				sql	+= " WHERE no = ?";
 			// 4. 실행객체 & 데이터 세팅
+				int idx = 0;
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, vo.getTitle());
-			pstmt.setString(2, vo.getContent());
-			pstmt.setString(3, vo.getId());
-			pstmt.setLong(4, vo.getNo());
+			pstmt.setString(++idx, vo.getTitle());
+			pstmt.setString(++idx, vo.getContent());
+			pstmt.setString(++idx, vo.getId());
+			if(vo.getFileName() != null)
+				pstmt.setString(++idx, vo.getFileName());
+			pstmt.setLong(++idx, vo.getNo());
 			// 5. 실행
 			// - select처리 : executeQuery() - rs가 나온다. insert,update,delete 처리 : executeUpdate() - int가 나온다.
 			result = pstmt.executeUpdate();
@@ -434,13 +443,14 @@ public class BoardDAO {
 			con = DB.getConnection();
 			//System.out.println("연결 완료");
 			// 3. SQL 작성
-			String sql = "INSERT INTO board(no, title, content, id) VALUES (board_seq.NEXTVAL, ?, ?, ?)";
+			String sql = "INSERT INTO board(no, title, content, id, fileName) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?)";
 			
 			// 4. 실행객체 & 데이터 세팅
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, vo.getTitle());
 			pstmt.setString(2, vo.getContent());
 			pstmt.setString(3, vo.getId());
+			pstmt.setString(4, vo.getFileName());
 
 			
 			System.out.println("BoardDAO.write().service" +sql);

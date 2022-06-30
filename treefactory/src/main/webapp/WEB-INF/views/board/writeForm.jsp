@@ -53,7 +53,7 @@ function sendData() {
 	<!-- method- 데이터를 넘기는 방식 - get:주소뒤에,post:눈에 안보이게 전달 -->
 	
 	<!--  action을 생략가능 - 생략시 같은주소를 호출한다 현재 writeForm을 호출 -->
-	<form action="write.do" method="post">
+	<form action="write.do" method="post" enctype="multipart/form-data">
 <input name="perPageNum" value=${param.perPageNum } type="hidden">
 	
 	<div class="form-group">
@@ -64,6 +64,10 @@ function sendData() {
 	    <label for="content">내용</label>
 	    <textarea rows="7" placeholder="내용 입력" name="content" id="content" class="form-control"></textarea>
 	    
+	  </div>
+	  <div class="form-group">
+	    <label for="image">이미지</label>
+	    <input type="file" class="form-control" id="image" name="image">
 	  </div>
 	<div class="form-group">
 	    <label for="writer">작성자</label>

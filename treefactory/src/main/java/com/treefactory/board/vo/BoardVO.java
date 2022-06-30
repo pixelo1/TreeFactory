@@ -3,7 +3,7 @@ package com.treefactory.board.vo;
 public class BoardVO {
 
 	private long no;
-	private String title, content, id, writeDate, updateDate;
+	private String title, content, id, writeDate, updateDate, fileName;
 	private long hit, rec;
 	private String tags, category;
 	public long getNo() {
@@ -42,6 +42,12 @@ public class BoardVO {
 	public void setUpdateDate(String updateDate) {
 		this.updateDate = updateDate;
 	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 	public long getHit() {
 		return hit;
 	}
@@ -69,10 +75,10 @@ public class BoardVO {
 	@Override
 	public String toString() {
 		return "BoardVO [no=" + no + ", title=" + title + ", content=" + content + ", id=" + id + ", writeDate="
-				+ writeDate + ", updateDate=" + updateDate + ", hit=" + hit + ", rec=" + rec + ", tags=" + tags
-				+ ", category=" + category + "]";
+				+ writeDate + ", updateDate=" + updateDate + ", fileName=" + fileName + ", hit=" + hit + ", rec=" + rec
+				+ ", tags=" + tags + ", category=" + category + "]";
 	}
-	
+
 	
 	
 }

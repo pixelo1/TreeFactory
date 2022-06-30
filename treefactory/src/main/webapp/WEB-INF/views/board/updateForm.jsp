@@ -51,12 +51,13 @@ function sendData() {
 <h2>일반게시판 수정</h2>
 <!-- method- 데이터를 넘기는 방식 - get:주소뒤에,post:눈에 안보이게 전달 -->
 <!--  action을 생략가능 - 생략시 같은주소를 호출한다 현재 writeForm을 호출 -->
-<form action="update.do" method="post">
+<form action="update.do" method="post"  enctype="multipart/form-data">
 <input name="page" value="${pageObject.page }" type="hidden">
 <input name="perPageNum" value="${pageObject.perPageNum }" type="hidden">
 <input name="key" value="${pageObject.key }" type="hidden">
 <input name="word" value="${pageObject.word }" type="hidden">
 <input name="category" value="${categoryPageObject.category }" type="hidden">
+<input type="hidden" name="del" value="${vo.fileName }">
 
 	<div class="form-group">
     <label for="no">번호</label>
@@ -69,6 +70,14 @@ function sendData() {
 	<div class="form-group">
     <label for="content">내용</label>
     <textarea rows="7" class="form-control" name="content" id="content">${vo.content}</textarea>
+  </div>
+	<div class="form-group">
+    <label >이미지 표시</label>
+    <img alt="" src="${vo.fileName }">
+  </div>
+	<div class="form-group">
+    <label for="image">이미지수정</label>
+    <input type="file" class="form-control" id="image" name="image">
   </div>
 	<div class="form-group">
     <label for="writer">작성자</label>

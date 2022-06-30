@@ -1,9 +1,12 @@
 package com.treefactory.board.controller;
 
+import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.treefactory.board.service.BoardDeleteService;
 import com.treefactory.board.service.BoardListService;
 import com.treefactory.board.service.BoardUpdateService;
@@ -100,18 +103,33 @@ public class BoardController implements Controller {
 		case "/write.do":
 			
 			//주소창에 넘어오는 데이터받기
-
-			String title = request.getParameter("title");
-			String content = request.getParameter("content");
-			String id = request.getParameter("writer");
-
-			String strPerPageNum = request.getParameter("perPageNum");
+			String savePath = "/upload/image/";
 			
+			String realSavePath = request.getServletContext().getRealPath(savePath);
+			
+			File folder = new File(realSavePath);
+			boolean isExist = folder.exists();
+
+			if(!isExist) folder.mkdirs();
+			
+			System.out.println("realSavePath: " +realSavePath+", 존재 여부 :" + isExist);
+			int maxSize = 1024 * 1024 * 20;
+			
+			MultipartRequest multi = new MultipartRequest(request, realSavePath, maxSize, "utf-8", new DefaultFileRenamePolicy());
+			String title = multi.getParameter("title");
+			String content = multi.getParameter("content");
+			String id = multi.getParameter("writer");
+			
+			String fileName = savePath+multi.getFilesystemName("image");
+			
+			String strPerPageNum = multi.getParameter("perPageNum");
+			System.out.println("파일 이름 : " +fileName);
 			//넘겨받은 데이터를 vo로 생성해서 넣어준다.
 			BoardVO vo = new BoardVO();
 			vo.setTitle(title);
 			vo.setContent(content);
 			vo.setId(id);
+			vo.setFileName(fileName);
 
 			//db등록 / 이미 등록되어있는 service 가져와서 쓴다
 			Execute.service(boardWriteService, vo);
@@ -188,22 +206,41 @@ public class BoardController implements Controller {
 				break;
 				
 			case "/update.do":
-				String strNo = request.getParameter("no");
+				savePath = "/upload/image/";
+				
+				realSavePath = request.getServletContext().getRealPath(savePath);
+				System.out.println("realSavePath: " +realSavePath);
+				maxSize = 1024 * 1024 * 20;
+				
+				multi = new MultipartRequest(request, realSavePath, maxSize, "utf-8", new DefaultFileRenamePolicy() );
+
+				
+				String strNo = multi.getParameter("no");
 				no = Long.parseLong(strNo);
 
 
-				title = request.getParameter("title");
-				content = request.getParameter("content");
-				id = request.getParameter("id");
+				title = multi.getParameter("title");
+				content = multi.getParameter("content");
+				id = multi.getParameter("id");
+				String filesystemName = multi.getFilesystemName("image");
+				fileName = null;
 
-				//페이지 검색 정보 받기
-				pageObject = PageObject.getInstance(request);
+				if(filesystemName == null || filesystemName.equals("")) fileName = null;
+				else fileName = savePath+filesystemName;
+				
+				String del = multi.getParameter("del");
+				
+				
+				//페이지 검색 정보 받기(multi 용으로 메서드 만듦)
+				CategoryPageObject categoryPageObjectForMulti = new CategoryPageObject();
+				categoryPageObjectForMulti = CategoryPageObject.getMultiInstance(multi);
 
 				vo = new BoardVO();
 				vo.setNo(no);
 				vo.setTitle(title);
 				vo.setContent(content);
 				vo.setId(id);
+				vo.setFileName(fileName);
 
 				//jsp(=이전controller역할) -> BoardUpdateService -> BoardDAO
 				// BoardUpdateService service = new BoardUpdateService();
@@ -213,11 +250,15 @@ public class BoardController implements Controller {
 				if(result == 1) System.out.println("게시판 글 수정이 되었습니다");
 				else  throw new Exception("게시판 글 수정이 되지 않았습니다 (정보를 확인해 주세요)");
 
+				if(result == 1 && filesystemName !=null && !filesystemName.equals("")) {
+					new File(request.getServletContext().getRealPath(del)).delete();
+				}
+				
 				//DB에 공지 등록 처리 - BoardUpdateservice -BoardDAO 기존 프로젝트에 썻던걸 사용
 				
 				//response는 dispacher 에 있어서 넘겨서 처리한다
 				//수정 처리 후 이동할 페이지 정보를"redirect:" 넘겨준다 - 스프링에서 이렇게쓴다
-				jsp = "redirect:view.do?no="+no+"&inc=0&page="+pageObject.getPage()+"&perPageNum="+pageObject.getPerPageNum()+"&key="+pageObject.getKey()+"&word="+pageObject.getWord();
+				jsp = "redirect:view.do?no="+no+"&inc=0&page="+categoryPageObjectForMulti.getPage()+"&perPageNum="+categoryPageObjectForMulti.getPerPageNum()+"&key="+categoryPageObjectForMulti.getKey()+"&word="+categoryPageObjectForMulti.getWord();
 				
 				break;
 				
@@ -228,9 +269,14 @@ public class BoardController implements Controller {
 				
 				noStr = request.getParameter("no");
 				no = Long.parseLong(noStr);
+				
+				del = request.getParameter("del");
+				
+				File delFile = new File(request.getServletContext().getRealPath(del));
 				//DB에 공지 등록 처리 - NoticeDelteservice  기존 프로젝트에 썻던걸 사용
-				Execute.service(boardDeleteService, no);
+				result = (Integer)Execute.service(boardDeleteService, no);
 
+				if(result == 1)delFile.delete();
 				jsp= "redirect:list.do?&perPageNum="+strPerPageNum;
 				
 				break;

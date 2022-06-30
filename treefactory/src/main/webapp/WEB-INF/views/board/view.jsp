@@ -143,6 +143,10 @@
 				<td>${vo.content}</td>
 			</tr>
 			<tr>
+				<th>이미지</th>
+				<td><img alt="" src="${vo.fileName }"> </td>				
+			</tr>
+			<tr>
 				<th>작성자</th>
 				<td>${vo.id}</td>
 			</tr>
@@ -156,10 +160,13 @@
 			</tr>
 			<tr>
 				<!-- 수정, 삭제, 리스트 버튼 : 2칸을 1칸으로 사용 colspan 옆에칸과 합침 / 위에칸와 합치는건 rowspan-->
-				<td colspan="2" style="border: none"><a
+				<td colspan="2" style="border: none">
+				<a
 					href="updateForm.do?no=${vo.no}&inc=0&page=${pageObject.page }&perPageNum=${pageObject.perPageNum }&key=${pageObject.key }&word=${pageObject.word }"
-					class="btn btn-default">수정</a> <a
-					href="delete.do?no=${vo.no}&perPageNum=${pageObject.perPageNum }"
+					class="btn btn-default">수정</a> 
+					
+					<a
+					href="delete.do?no=${vo.no}&perPageNum=${pageObject.perPageNum }&del=${vo.fileName}"
 					class="btn btn-danger" onclick="return confirm('정말, 삭제하시겠습니까?')">삭제</a>
 					<a
 					href="list.do?page=${pageObject.page }&perPageNum=${pageObject.perPageNum }&period=${pageObject.period }&key=${pageObject.key }&word=${pageObject.word }"
