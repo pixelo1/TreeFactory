@@ -2,6 +2,8 @@ package com.treefactory.main;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.tomcat.util.http.fileupload.RequestContext;
+
 public interface Controller {
 
 	//request를 전달받아 처리한다, 
