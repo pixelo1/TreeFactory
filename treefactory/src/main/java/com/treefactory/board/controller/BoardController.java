@@ -14,6 +14,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.treefactory.board.service.BoardDeleteService;
+import com.treefactory.board.service.BoardDeleteUploadFileService;
 import com.treefactory.board.service.BoardFileUploadService;
 import com.treefactory.board.service.BoardListService;
 import com.treefactory.board.service.BoardUpdateService;
@@ -44,6 +45,7 @@ public class BoardController implements Controller {
 	private BoardWriteService3 boardWriteService3;
 	private BoardFileUploadService boardFileUploadService;
 	private BoardViewUploadFileService boardViewUploadFileService;
+	private BoardDeleteUploadFileService boardDeleteUploadFileService;
 	//댓글
 	private ReplyListService replyListService;
 	
@@ -94,6 +96,10 @@ public class BoardController implements Controller {
 	public void setBoardViewUploadFileService(BoardViewUploadFileService boardViewUploadFileService) {
 		this.boardViewUploadFileService = boardViewUploadFileService;
 	}
+	
+	public void setBoardDeleteUploadFileService(BoardDeleteUploadFileService boardDeleteUploadFileService) {
+		this.boardDeleteUploadFileService = boardDeleteUploadFileService;
+	}
 
 	@Override
 	public String execute(HttpServletRequest request) throws Exception{
@@ -139,11 +145,11 @@ public class BoardController implements Controller {
 			
 			jsp = "board/writeForm2";
 			break;
-			//일반 게시판 글쓰기 처리
+
 		case "/write.do":
 			
-			//주소창에 넘어오는 데이터받기
-			String savePath = "/upload/image/";
+			
+			String savePath = "/upload/image2/";
 			
 			String realSavePath = request.getServletContext().getRealPath(savePath);
 			
@@ -154,45 +160,6 @@ public class BoardController implements Controller {
 			
 			System.out.println("realSavePath: " +realSavePath+", 존재 여부 :" + isExist);
 			int maxSize = 1024 * 1024 * 20;
-			
-			MultipartRequest multi = new MultipartRequest(request, realSavePath, maxSize, "utf-8", new DefaultFileRenamePolicy());
-			String title = multi.getParameter("title");
-			String content = multi.getParameter("content");
-			String id = multi.getParameter("writer");
-			
-			String fileName = savePath+multi.getFilesystemName("image");
-			
-			String strPerPageNum = multi.getParameter("perPageNum");
-			System.out.println("파일 이름 : " +fileName);
-			//넘겨받은 데이터를 vo로 생성해서 넣어준다.
-			BoardVO vo = new BoardVO();
-			vo.setTitle(title);
-			vo.setContent(content);
-			vo.setId(id);
-			vo.setFileName(fileName);
-			
-			//db등록 / 이미 등록되어있는 service 가져와서 쓴다
-			Execute.service(boardWriteService, vo);
-			//이동
-//			response.sendRedirect("list.jsp?perPageNum"+strPerPageNum);
-			//redirect: - url 이동 , 없으면 jsp 로 이동
-			jsp = "redirect:list.do?perPageNum="+strPerPageNum;
-			break;
-
-		case "/write2.do":
-			
-			
-			savePath = "/upload/image2/";
-			
-			realSavePath = request.getServletContext().getRealPath(savePath);
-			
-			folder = new File(realSavePath);
-			isExist = folder.exists();
-			
-			if(!isExist) folder.mkdirs();
-			
-			System.out.println("realSavePath: " +realSavePath+", 존재 여부 :" + isExist);
-			maxSize = 1024 * 1024 * 20;
 			// ' DiskFileItemFactory '는 업로드 된 파일을 저장할 저장소와 관련된 클래스
 			DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
 			diskFileItemFactory.setDefaultCharset("utf-8");
@@ -207,12 +174,12 @@ public class BoardController implements Controller {
 			List<BoardFileUploadVO> listBoardFileUploadVO = new ArrayList<BoardFileUploadVO>();
 			
 			BoardFileUploadVO boardFileUploadVO = new BoardFileUploadVO();
-			title = null;
-			content = null;
-			id = null;
+			String title = null;
+			String content = null;
+			String id = null;
 			String separator = File.separator;
-			fileName = null;
-			strPerPageNum = null;
+			String fileName = null;
+			String strPerPageNum = null;
 			String orgFileName = null;
 			for(FileItem item : items) {
 				if(item.isFormField()) {
@@ -307,7 +274,7 @@ public class BoardController implements Controller {
 			//한 페이지당 보여주는 데이터의 갯수는 기본 값인 10을 그대로 사용한다.
 
 			//게시판 글보기 데이터 가져오기
-			vo = (BoardVO) Execute.service(boardViewService, new Object[]{no, inc});
+			BoardVO vo = (BoardVO) Execute.service(boardViewService, new Object[]{no, inc});
 			
 			listBoardFileUploadVO = (List<BoardFileUploadVO>) Execute.service(boardViewUploadFileService, no);
 			//게시판 댓글 리스트 데이터 가져오기 - board/view.jsp - com.webjjang.reply.service.ReplyListService -> dao.ReplyDAO
@@ -345,68 +312,155 @@ public class BoardController implements Controller {
 			    //application(서버실행시) or session(상용자가 요청시생김) or request(데이터를뿌려줄때만 쓰고 버린다)  or pagecontext(해당하는jsp에서만 쓴다)
 			    request.setAttribute("pageObject", pageObject);
 			    request.setAttribute("vo", Execute.service(boardViewService, new Object[]{no, 0}));
+			    request.setAttribute("listBoardFileUploadVO", (List<BoardFileUploadVO>) Execute.service(boardViewUploadFileService, no));
 				
 			    //updateForm.jsp 로 이동시키기 위해 정보 저장
 			    jsp = "board/updateForm";
 				break;
 				
 			case "/update.do":
-				savePath = "/upload/image/";
+				
+				savePath = "/upload/image2/";
 				
 				realSavePath = request.getServletContext().getRealPath(savePath);
-				System.out.println("realSavePath: " +realSavePath);
+				
+				folder = new File(realSavePath);
+				isExist = folder.exists();
+				
+				if(!isExist) folder.mkdirs();
+				
+				System.out.println("realSavePath: " +realSavePath+", 존재 여부 :" + isExist);
 				maxSize = 1024 * 1024 * 20;
+				// ' DiskFileItemFactory '는 업로드 된 파일을 저장할 저장소와 관련된 클래스
+				diskFileItemFactory = new DiskFileItemFactory();
+				diskFileItemFactory.setDefaultCharset("utf-8");
+				diskFileItemFactory.setRepository(new File(realSavePath));
+				diskFileItemFactory.setSizeThreshold(maxSize);
 				
-				multi = new MultipartRequest(request, realSavePath, maxSize, "utf-8", new DefaultFileRenamePolicy() );
-
+				fileUpload = new ServletFileUpload(diskFileItemFactory);
 				
-				String strNo = multi.getParameter("no");
-				no = Long.parseLong(strNo);
-
-
-				title = multi.getParameter("title");
-				content = multi.getParameter("content");
-				id = multi.getParameter("id");
-				String filesystemName = multi.getFilesystemName("image");
+				items = fileUpload.parseRequest(request);
+				
+				boardVO = new BoardVO();
+				listBoardFileUploadVO = new ArrayList<BoardFileUploadVO>();
+				
+				boardFileUploadVO = new BoardFileUploadVO();
+				title = null;
+				content = null;
+				id = null;
+				separator = File.separator;
 				fileName = null;
-
-				if(filesystemName == null || filesystemName.equals("")) fileName = null;
-				else fileName = savePath+filesystemName;
+				orgFileName = null;
+				no = null;
+				strPerPageNum = null;
+				String strNo = null;
+				Long perPageNum = null;
+				String strPage = null;
+				Long page = null;
+				List<String> listDel = new ArrayList<String>();
+				int delIndex = 0;
+				categoryPageObject = new CategoryPageObject();
 				
-				String del = multi.getParameter("del");
-				
-				
-				//페이지 검색 정보 받기(multi 용으로 메서드 만듦)
-				CategoryPageObject categoryPageObjectForMulti = new CategoryPageObject();
-				categoryPageObjectForMulti = CategoryPageObject.getMultiInstance(multi);
-
-				vo = new BoardVO();
-				vo.setNo(no);
-				vo.setTitle(title);
-				vo.setContent(content);
-				vo.setId(id);
-				vo.setFileName(fileName);
-
-				//jsp(=이전controller역할) -> BoardUpdateService -> BoardDAO
-				// BoardUpdateService service = new BoardUpdateService();
-				// int result = service.service(vo);
-				int result = (Integer)Execute.service(boardUpdateService, vo);
-
-				if(result == 1) System.out.println("게시판 글 수정이 되었습니다");
-				else  throw new Exception("게시판 글 수정이 되지 않았습니다 (정보를 확인해 주세요)");
-
-				if(result == 1 && filesystemName !=null && !filesystemName.equals("")) {
-					new File(request.getServletContext().getRealPath(del)).delete();
+				boolean fileUploadCheck = false;
+				boolean delcheck = false;
+				for(FileItem item : items) {
+					if(item.isFormField()) {
+						//%s (문자열 형식)/ 업로드된 파일이 단순 text데이터면 실행
+						System.out.println(String.format("<파일형식이 아닌 파라미터>파라미터명: %s, 파일 명: %s, 파일크기: %s bytes", item.getFieldName(), item.getString(), item.getSize()));
+						if(item.getFieldName() == "title" || (item.getFieldName()).equals("title")) {
+							title = item.getString();
+							System.out.println("제목 : "+title);
+//							키, 값으로 가능 name = fieldName , valaue = getString 으로 가능
+//							serviceRequest.setAttribute(name, value);
+						}else if (item.getFieldName() == "content" ||(item.getFieldName()).equals("content")) {
+							content = item.getString();
+							System.out.println("내용 : "+content);
+						}else if (item.getFieldName() == "writer" ||(item.getFieldName()).equals("writer")) {
+							id = item.getString();
+							System.out.println("아이디 : "+id);
+						}else if (item.getFieldName() == "no" ||(item.getFieldName()).equals("no")) {
+							strNo = item.getString();
+							no = Long.parseLong(strNo);
+						}else if (item.getFieldName() == "perPageNum" ||(item.getFieldName()).equals("perPageNum")) {
+							categoryPageObject.setPerPageNum(perPageNum = Long.parseLong(strPerPageNum =item.getString()));
+						}
+						
+						else if (item.getFieldName() == "page" ||(item.getFieldName()).equals("page")) {
+							categoryPageObject.setPage(page = Long.parseLong(strPage = item.getString()) );
+						}else if (item.getFieldName() == "key" ||(item.getFieldName()).equals("key")) {
+							categoryPageObject.setKey(item.getString());
+						}else if (item.getFieldName() == "word" ||(item.getFieldName()).equals("word")) {
+							categoryPageObject.setWord(item.getString());
+						}else if (item.getFieldName() == "del" ||(item.getFieldName()).equals("del")) {
+							listDel.add(item.getString());
+							delcheck = true;
+						}
+						
+						
+					}else {
+						System.out.println(String.format("파일형식인 파라미터 - 파라미터명: %s, 파일 : %s , 파일크기: %s bytes", item.getFieldName(), item.getName(), item.getSize()));
+						if(item.getSize() > 0) {
+							int index = item.getName().lastIndexOf(separator);
+							int extensionIndex = item.getName().lastIndexOf(".");
+							
+//							fileName = item.getName().substring(index + 1);
+							//확장자 때어내기
+							String extension = item.getName().substring(extensionIndex);
+							// 슬레시없음
+							orgFileName = item.getName().substring(index+1);
+							fileName = item.getName().substring(index + 1,extensionIndex);
+							System.out.println("확장자 제외한 파일이름"+fileName);
+							//랜덤함수를통한 랜덤화
+							fileName = UUID.randomUUID().toString().replaceAll("-", "")+extension;
+							
+//							File uploadFile = new File(realSavePath+separator+fileName);
+							File uploadFile = new File(realSavePath+fileName);
+							item.write(uploadFile);
+							if(uploadFile.toString() != null && !uploadFile.toString().equals("")) {
+								boardFileUploadVO = new BoardFileUploadVO();
+								boardFileUploadVO.setOrgFileName(orgFileName);
+								boardFileUploadVO.setFileName(savePath+fileName);
+								boardFileUploadVO.setFileSize(item.getSize());
+								boardFileUploadVO.setRealSavePath(realSavePath+fileName);
+								
+								fileUploadCheck = true;
+								
+								System.out.println("실제저장장소 : " + boardFileUploadVO.getRealSavePath());
+								
+								listBoardFileUploadVO.add(boardFileUploadVO);
+							}
+						}
+					}//end of else
 				}
 				
-				//DB에 공지 등록 처리 - BoardUpdateservice -BoardDAO 기존 프로젝트에 썻던걸 사용
+				if(title != null && content != null && id != null ) {
+					boardVO = new BoardVO();
+					boardVO.setTitle(title);
+					boardVO.setContent(content);
+					boardVO.setId(id);
+					boardVO.setNo(no);
+				}
+				//파일 안들어가면 안들어간대로 가능함
+				int result = (Integer) Execute.service(boardUpdateService, boardVO);
+				result += (Integer) Execute.service(boardFileUploadService, new Object[] {listBoardFileUploadVO,no});
 				
-				//response는 dispacher 에 있어서 넘겨서 처리한다
-				//수정 처리 후 이동할 페이지 정보를"redirect:" 넘겨준다 - 스프링에서 이렇게쓴다
-				jsp = "redirect:view.do?no="+no+"&inc=0&page="+categoryPageObjectForMulti.getPage()+"&perPageNum="+categoryPageObjectForMulti.getPerPageNum()+"&key="+categoryPageObjectForMulti.getKey()+"&word="+categoryPageObjectForMulti.getWord();
+				//업로드한 파일도 있고 기존 사진도 있는 상황 기존파일은 delete해줘야함
+				if(fileUploadCheck && delcheck) {
+					for(String imageDel : listDel) {
+						realSavePath = request.getServletContext().getRealPath(imageDel);
+						System.out.println("이미지 삭제 실제 폴더"+realSavePath);
+						new File(realSavePath).delete();
+						boardFileUploadVO = new BoardFileUploadVO();
+						boardFileUploadVO.setBoardNo(no);
+						boardFileUploadVO.setRealSavePath(realSavePath);
+						
+						Execute.service(boardDeleteUploadFileService, boardFileUploadVO);
+					}
+				}
+				jsp = "redirect:view.do?no="+no+"&inc=0&page="+categoryPageObject.getPage()+"&perPageNum="+categoryPageObject.getPerPageNum()+"&key="+categoryPageObject.getKey()+"&word="+categoryPageObject.getWord();
 				
 				break;
-				
+
 			case "/delete.do":
 				
 				strPerPageNum = request.getParameter("perPageNum");
@@ -415,13 +469,20 @@ public class BoardController implements Controller {
 				noStr = request.getParameter("no");
 				no = Long.parseLong(noStr);
 				
-				del = request.getParameter("del");
+				File del= null;
 				
-				File delFile = new File(request.getServletContext().getRealPath(del));
-				//DB에 공지 등록 처리 - NoticeDelteservice  기존 프로젝트에 썻던걸 사용
+				listBoardFileUploadVO = (List<BoardFileUploadVO>) Execute.service(boardViewUploadFileService, no);
+				
+				for (BoardFileUploadVO fileVO : listBoardFileUploadVO) {
+						if(fileVO.getFileName() != null && !fileVO.equals("")) {
+							new File(request.getServletContext().getRealPath(fileVO.getFileName())).delete();
+			//					delFile = new File(request.getServletContext().getRealPath(del));
+						}
+					
+					}
+				
 				result = (Integer)Execute.service(boardDeleteService, no);
 
-				if(result == 1)delFile.delete();
 				jsp= "redirect:list.do?&perPageNum="+strPerPageNum;
 				
 				break;

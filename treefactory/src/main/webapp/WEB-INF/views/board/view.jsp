@@ -39,7 +39,6 @@
 				<td>
 				<c:forEach items="${listBoardFileUploadVO }" var="fileVO">
 				<img alt="" src="${fileVO.fileName }"><p>${fileVO.orgFileName }</p> 
-				
 				</c:forEach>
 				</td>				
 			</tr>
@@ -63,7 +62,7 @@
 					class="btn btn-default">수정</a> 
 					
 					<a
-					href="delete.do?no=${vo.no}&perPageNum=${pageObject.perPageNum }&del=${vo.fileName}"
+					href="delete.do?no=${vo.no}&perPageNum=${pageObject.perPageNum }"
 					class="btn btn-danger" onclick="return confirm('정말, 삭제하시겠습니까?')">삭제</a>
 					<a
 					href="list.do?page=${pageObject.page }&perPageNum=${pageObject.perPageNum }&period=${pageObject.period }&key=${pageObject.key }&word=${pageObject.word }"

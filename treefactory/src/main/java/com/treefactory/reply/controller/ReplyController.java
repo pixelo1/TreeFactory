@@ -139,7 +139,7 @@ public class ReplyController implements Controller {
 					+"&perPageNum="+request.getParameter("perPageNum")
 					+"&key="+request.getParameter("key")
 					+"&word="+request.getParameter("word")
-					+"&replyPage=1" ;
+					+"&replyPage="+request.getParameter("replyPage") ;
 				
 				break;
 			

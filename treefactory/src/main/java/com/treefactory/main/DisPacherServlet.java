@@ -16,6 +16,7 @@ import org.apache.tomcat.util.http.fileupload.RequestContext;
 import com.treefactory.board.controller.BoardController;
 import com.treefactory.board.dao.BoardDAO;
 import com.treefactory.board.service.BoardDeleteService;
+import com.treefactory.board.service.BoardDeleteUploadFileService;
 import com.treefactory.board.service.BoardFileUploadService;
 import com.treefactory.board.service.BoardListService;
 import com.treefactory.board.service.BoardUpdateService;
@@ -97,6 +98,9 @@ public class DisPacherServlet extends HttpServlet {
 		BoardViewUploadFileService boardViewUploadFileService = new BoardViewUploadFileService();
 		boardViewUploadFileService.setDao(boardDAO);
 		
+		BoardDeleteUploadFileService boardDeleteUploadFileService = new BoardDeleteUploadFileService();
+		boardDeleteUploadFileService.setDao(boardDAO);
+		
 		BoardController boardController = new BoardController();
 
 		boardController.setBoardListService(boardListService);
@@ -108,6 +112,7 @@ public class DisPacherServlet extends HttpServlet {
 		boardController.setBoardWriteService3(boardWriteService3);
 		boardController.setBoardFileUploadService(boardFileUploadService);
 		boardController.setBoardViewUploadFileService(boardViewUploadFileService);
+		boardController.setBoardDeleteUploadFileService(boardDeleteUploadFileService);
 		//url 매핑은 맨아래에
 
 		

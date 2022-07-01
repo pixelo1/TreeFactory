@@ -1,7 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
-    <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,6 +57,7 @@ function sendData() {
 <input name="key" value="${pageObject.key }" type="hidden">
 <input name="word" value="${pageObject.word }" type="hidden">
 <input name="category" value="${categoryPageObject.category }" type="hidden">
+<input type="hidden" name="del" value="${vo.fileName }">
 
 	<div class="form-group">
     <label for="no">번호</label>
@@ -74,14 +73,11 @@ function sendData() {
   </div>
 	<div class="form-group">
     <label >이미지 표시</label>
-	    <c:forEach items="${listBoardFileUploadVO }" var="listFile" varStatus="vs">
-	    	<img alt="" src="${listFile.fileName }"><p>${listFile.orgFileName }</p>
-	    	<input name="del" value="${listFile.fileName}" type="hidden">
-	    </c:forEach>
-  	</div>
+    <img alt="" src="${vo.fileName }">
+  </div>
 	<div class="form-group">
     <label for="image">이미지수정</label>
-    <input type="file" class="form-control" id="images" name="images" multiple="multiple">
+    <input type="file" class="form-control" id="image" name="image">
   </div>
 	<div class="form-group">
     <label for="writer">작성자</label>
