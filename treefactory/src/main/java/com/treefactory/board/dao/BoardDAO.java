@@ -190,11 +190,6 @@ public class BoardDAO {
 	
 	
 	
-	
-	// 게시판 글 총 개수 가져오기
-	//전체 데이터숫자 가져와서 계산
-	// DB 쿼리 : SELECT count(*) FROM board;      검색이 있다면 where문장 써야함
-	// 페이지 정보를 받아서 처리한다 -PageObject pageObject
 	public Long getTotalRow(CategoryPageObject categoryPageObject) throws Exception{
 		// 리턴 타입과 동일한 변수 - 데이터가 있다면 데이터를 채워서 리턴시킨다.
 		Long totalRow = 0L;
@@ -258,10 +253,6 @@ public class BoardDAO {
 
 		
 	
-	
-	// 게시판 글보기
-	// DB 쿼리 : SELECT no, title, content, writer, writeDate, hit FROM board WHERE no = 2;
-	// 글번호는 받아서 처리한다. - long no
 	public BoardVO view(long no) throws Exception{
 		// 리턴 타입과 동일한 변수 - 데이터가 있다면 데이터를 채워서 리턴시킨다.
 		BoardVO vo = null;
@@ -388,11 +379,6 @@ public class BoardDAO {
 	}
 	
 	
-	
-	// 게시판 글보기 조회수 1증가
-	// DB 쿼리 : UPDATE board SET hit = hit + 1 WHERE no = ?
-	// 번호 받아서 처리한다. - long no
-	// 데이터가 수정이 됐으면 1이 안됐으면 0이 리턴된다.
 	public Integer increase(long no) throws Exception{
 		// return 타입과 동일한변수 선언
 		Integer result = 0;
@@ -767,13 +753,6 @@ public class BoardDAO {
 	}
 
 
-	
-	
-	
-	// 게시판 글삭제
-	// DB 쿼리 : DELETE FROM board WHERE no = ?
-	// 번호 -> no 받아서 처리한다. 
-	// 데이터가 삭제가 됐으면 1이 안됐으면 0이 리턴된다.
 	public Integer delete(long no) throws Exception{
 		// return 타입과 동일한변수 선언
 		Integer result = 0;
