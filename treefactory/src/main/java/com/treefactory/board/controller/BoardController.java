@@ -3,6 +3,7 @@ package com.treefactory.board.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -204,6 +205,7 @@ public class BoardController implements Controller {
 			String separator = File.separator;
 			fileName = null;
 			strPerPageNum = null;
+			String orgFileName = null;
 			for(FileItem item : items) {
 				if(item.isFormField()) {
 					//%s (문자열 형식)/ 업로드된 파일이 단순 text데이터면 실행
@@ -228,14 +230,29 @@ public class BoardController implements Controller {
 					System.out.println(String.format("파일형식인 파라미터 - 파라미터명: %s, 파일 : %s , 파일크기: %s bytes", item.getFieldName(), item.getName(), item.getSize()));
 					if(item.getSize() > 0) {
 						int index = item.getName().lastIndexOf(separator);
-						fileName = item.getName().substring(index + 1);
-						File uploadFile = new File(realSavePath+separator+fileName);
+						int extensionIndex = item.getName().lastIndexOf(".");
+						
+//						fileName = item.getName().substring(index + 1);
+						//확장자 때어내기
+						String extension = item.getName().substring(extensionIndex);
+						// 슬레시없음
+						orgFileName = item.getName().substring(index+1);
+						fileName = item.getName().substring(index + 1,extensionIndex);
+						System.out.println("확장자 제외한 파일이름"+fileName);
+						//랜덤함수를통한 랜덤화
+						fileName = UUID.randomUUID().toString().replaceAll("-", "")+extension;
+						
+//						File uploadFile = new File(realSavePath+separator+fileName);
+						File uploadFile = new File(realSavePath+fileName);
 						item.write(uploadFile);
 						if(uploadFile.toString() != null && !uploadFile.toString().equals("")) {
 							boardFileUploadVO = new BoardFileUploadVO();
+							boardFileUploadVO.setOrgFileName(orgFileName);
 							boardFileUploadVO.setFileName(savePath+fileName);
 							boardFileUploadVO.setFileSize(item.getSize());
-							boardFileUploadVO.setRealSavePath(realSavePath+separator+fileName);
+							boardFileUploadVO.setRealSavePath(realSavePath+fileName);
+							
+							System.out.println("실제저장장소 : " + boardFileUploadVO.getRealSavePath());
 							
 							listBoardFileUploadVO.add(boardFileUploadVO);
 						}

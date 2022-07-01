@@ -3,7 +3,7 @@ package com.treefactory.board.vo;
 public class BoardFileUploadVO {
 
 	private Long uploadNo, boardNo;
-	private String fileName, realSavePath;
+	private String fileName, realSavePath, orgFileName;
 	private Long fileSize;
 	public Long getUploadNo() {
 		return uploadNo;
@@ -29,6 +29,12 @@ public class BoardFileUploadVO {
 	public void setRealSavePath(String realSavePath) {
 		this.realSavePath = realSavePath;
 	}
+	public String getOrgFileName() {
+		return orgFileName;
+	}
+	public void setOrgFileName(String orgFileName) {
+		this.orgFileName = orgFileName;
+	}
 	public Long getFileSize() {
 		return fileSize;
 	}
@@ -38,8 +44,9 @@ public class BoardFileUploadVO {
 	@Override
 	public String toString() {
 		return "BoardFileUploadVO [uploadNo=" + uploadNo + ", boardNo=" + boardNo + ", fileName=" + fileName
-				+ ", realSavePath=" + realSavePath + ", fileSize=" + fileSize + "]";
+				+ ", realSavePath=" + realSavePath + ", orgFileName=" + orgFileName + ", fileSize=" + fileSize + "]";
 	}
+
 	
 	
 }

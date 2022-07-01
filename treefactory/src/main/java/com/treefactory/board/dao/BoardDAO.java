@@ -481,7 +481,7 @@ public class BoardDAO {
 		return result;
 	}
 
-	// 스키마 나눠서 운용함 안씀
+	// 스키마 나눠서 운용해서 안씀
 	public Integer writeMulti(List<BoardVO> listBoardVO) throws Exception{
 		// return 타입과 동일한변수 선언
 		Integer result = 0;
@@ -666,16 +666,18 @@ public class BoardDAO {
 			con = DB.getConnection();
 			//System.out.println("연결 완료");
 			// 3. SQL 작성
-			String sql = "INSERT INTO board_fileUpload(uploadNo, boardNo, fileName, fileSize, realSavePath) "
-					+ " VALUES (board_fileUpload_seq.NEXTVAL, ?, ?, ?, ?)";
+			String sql = "INSERT INTO board_fileUpload(uploadNo, boardNo, orgFileName, fileName, fileSize, realSavePath) "
+					+ " VALUES (board_fileUpload_seq.NEXTVAL, ?, ?, ?, ?, ?)";
 //			String sql = "INSERT INTO board(no, title, content, id, fileName) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?)";
 			for(BoardFileUploadVO vo : listBoardFileUploadVO) {
 				if(vo != null && !vo.equals(""))
 				pstmt = con.prepareStatement(sql);
 				pstmt.setLong(1, no);
-				pstmt.setString(2, vo.getFileName());
-				pstmt.setLong(3, vo.getFileSize());
-				pstmt.setString(4, vo.getRealSavePath());
+				
+				pstmt.setString(2, vo.getOrgFileName());
+				pstmt.setString(3, vo.getFileName());
+				pstmt.setLong(4, vo.getFileSize());
+				pstmt.setString(5, vo.getRealSavePath());
 				
 				result += pstmt.executeUpdate();
 			}
