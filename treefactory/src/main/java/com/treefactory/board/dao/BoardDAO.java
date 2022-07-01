@@ -326,9 +326,6 @@ public class BoardDAO {
 	}
 
 	
-	// 게시판 글보기
-	// DB 쿼리 : SELECT no, title, content, writer, writeDate, hit FROM board WHERE no = 2;
-	// 글번호는 받아서 처리한다. - long no
 	public List<BoardFileUploadVO> viewUploadFile(long no) throws Exception{
 		// 리턴 타입과 동일한 변수 - 데이터가 있다면 데이터를 채워서 리턴시킨다.
 		List<BoardFileUploadVO> listBoardFileUploadVO = null;
