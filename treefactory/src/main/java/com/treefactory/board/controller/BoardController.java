@@ -13,11 +13,14 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.treefactory.board.service.BoardDeleteService;
+import com.treefactory.board.service.BoardFileUploadService;
 import com.treefactory.board.service.BoardListService;
 import com.treefactory.board.service.BoardUpdateService;
 import com.treefactory.board.service.BoardViewService;
 import com.treefactory.board.service.BoardWriteService;
 import com.treefactory.board.service.BoardWriteService2;
+import com.treefactory.board.service.BoardWriteService3;
+import com.treefactory.board.vo.BoardFileUploadVO;
 import com.treefactory.board.vo.BoardVO;
 import com.treefactory.main.Controller;
 import com.treefactory.main.Execute;
@@ -36,7 +39,8 @@ public class BoardController implements Controller {
 	private BoardUpdateService boardUpdateService;
 	private BoardDeleteService boardDeleteService;
 	private BoardWriteService2 boardWriteService2;
-	
+	private BoardWriteService3 boardWriteService3;
+	private BoardFileUploadService boardFileUploadService;
 	//댓글
 	private ReplyListService replyListService;
 	
@@ -68,9 +72,20 @@ public class BoardController implements Controller {
 	public void setBoardWriteService2(BoardWriteService2 boardWriteService2) {
 		this.boardWriteService2 = boardWriteService2;
 	}
+	
 
 	//request를 전달받아 처리한다, 
 	//Strirg 은 JSP 에 대한 정보(어떤JSP를 쓸것인지)를 담고있다, URL 이동 정보를 담고있다("redirect:url" 형식 사용)
+	public void setBoardWriteService3(BoardWriteService3 boardWriteService3) {
+		this.boardWriteService3 = boardWriteService3;
+	}
+
+	
+	
+	public void setBoardFileUploadService(BoardFileUploadService boardFileUploadService) {
+		this.boardFileUploadService = boardFileUploadService;
+	}
+
 	@Override
 	public String execute(HttpServletRequest request) throws Exception{
 		
@@ -154,63 +169,45 @@ public class BoardController implements Controller {
 			//redirect: - url 이동 , 없으면 jsp 로 이동
 			jsp = "redirect:list.do?perPageNum="+strPerPageNum;
 			break;
+
 		case "/write2.do":
 			
 			
-//			System.out.println("타이틀 : "+title+"내용 : "+content+"아이디 : "+id);
-			//주소창에 넘어오는 데이터받기
-//			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 			savePath = "/upload/image2/";
 			
 			realSavePath = request.getServletContext().getRealPath(savePath);
-
+			
 			folder = new File(realSavePath);
 			isExist = folder.exists();
-
+			
 			if(!isExist) folder.mkdirs();
 			
 			System.out.println("realSavePath: " +realSavePath+", 존재 여부 :" + isExist);
 			maxSize = 1024 * 1024 * 20;
-			//이미 tomcat에 있음 ' DiskFileItemFactory '는 업로드 된 파일을 저장할 저장소와 관련된 클래스
+			// ' DiskFileItemFactory '는 업로드 된 파일을 저장할 저장소와 관련된 클래스
 			DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-			//' setRepository() '메서드는 업로드된 파일을 저장할 위치를  'File'객체로 지정
 			diskFileItemFactory.setDefaultCharset("utf-8");
 			diskFileItemFactory.setRepository(new File(realSavePath));
-			// setSizeThreshold()는 저장소에 임시파일을 생성할 한계 크기를 byte 단위로 지정
 			diskFileItemFactory.setSizeThreshold(maxSize);
 			
-			// ServletFileUpload '클래스는 HTTP요청에 대한 'HttpServletRequest '객체로부터 
-			//'multipart/form-data '형식으로 넘어온 HTTP Body부분을 다루기 쉽게 변환해주는 역할을 수행.
 			ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
 			
-			//commons.fileUpload 서블릿 으로 임포트하면 한글이 다깨져버림 ( tomcat은 한글로 나오는데 parseRequest에 타입이 http서블릿이 없어서 못씀)
-//			fileUpload.setHeaderEncoding("utf-8");
-			
-			//' parseRequest() '메서드를 수행하면 ' FileItem '이라는 형식으로 반환해줌
-			// 컨트롤러 파라미터가 HttpServletRequest 타입으로 넣을수 있게 선택해야함 2개있음
 			List<FileItem> items = fileUpload.parseRequest(request);
 			
-//			System.out.println("items : "+items);
-			List<BoardVO> listBoardVO = new ArrayList<BoardVO>();
+			BoardVO boardVO = new BoardVO();
+			List<BoardFileUploadVO> listBoardFileUploadVO = new ArrayList<BoardFileUploadVO>();
 			
+			BoardFileUploadVO boardFileUploadVO = new BoardFileUploadVO();
 			title = null;
 			content = null;
 			id = null;
 			String separator = File.separator;
-			boolean FileNameCheck = false;
 			fileName = null;
 			strPerPageNum = null;
 			for(FileItem item : items) {
-				//파일 이름
-//				System.out.println("Name :" + item.getName());
-				//사용자가 업로드한 ' File '데이터나 사용자가 ' input text '에 입력한 일반 요청 데이터에 대한 객체.
-//' FileItem isFormField() '메서드의 리턴값이 'true'이면 'text'같은 일반 입력 데이터이며,
-				//'false'이면 파일데이터임을 알 수 있음. 즉, 리턴값이 'false'인 경우에만 업로드된 파일인 것으로 인지하여 처리하면 됨.
 				if(item.isFormField()) {
 					//%s (문자열 형식)/ 업로드된 파일이 단순 text데이터면 실행
-//					System.out.println(String.format("[파일형식이 아닌 파라미터] 파라미터명: %s, 파일크기: %s bytes", item.getFieldName(), item.getSize()));
 					System.out.println(String.format("<파일형식이 아닌 파라미터>파라미터명: %s, 파일 명: %s, 파일크기: %s bytes", item.getFieldName(), item.getString(), item.getSize()));
-//					System.out.println(String.format("[파일형식이 아닌 파라미터] 파라미터명: %s, 파일 명: %s, 파일크기: %s bytes", item.getFieldName(), item.getString("UTF-8"), item.getSize()));
 					if(item.getFieldName() == "title" || (item.getFieldName()).equals("title")) {
 						title = item.getString();
 						System.out.println("제목 : "+title);
@@ -228,56 +225,40 @@ public class BoardController implements Controller {
 					
 					
 				}else {
-//					System.out.println(String.format("[파일형식인 파라미터] 파라미터명: %s, 파일 명: %s, 파일크기: %s bytes <br>", item.getFieldName(), item.getString(), item.getSize()));
-					//파라미터의 값을 가져오는 getString은 글자가 깨진다 생각해보면 file 타입으로 파일을 넘겨 올리니 getName으로 업로드한 파일의 이름을 ㄹ가져오면 된거다 이미 파일을 올라갔으니까
-					//getSize 도 업로드된 파일 사이즈를 가져오는것이다
 					System.out.println(String.format("파일형식인 파라미터 - 파라미터명: %s, 파일 : %s , 파일크기: %s bytes", item.getFieldName(), item.getName(), item.getSize()));
 					if(item.getSize() > 0) {
-						//운영체제별로 각기 다른 파일경로 구분자를 담고있다(windows = \ , Linux = /) 
-						//따라서 업로드한 파일 경로의 마지막 separator 뒤에 오는 값이 실제 파일며이라고 할수있음
-						// c\app\text.txt 의 경우 마지막 \ 뒤인 text.txt가 실제 파일명이 됨
-						//각운영체제에 맞게 / 를쓸것인지 \ 쓸것인지 저장시키는 용도
-						
-						
-//						System.out.println("Name :" + item.getName());
-						// 구분문자가 있으면(여러개 있다면 마지막 인덱스번호) 인덱스 번호 반환 없으면 -1
-						// 마지막 text.txt 바로전 \ 인덱스번호 가져온다
 						int index = item.getName().lastIndexOf(separator);
-						//지정한 인덱스 번호부터 마지막까지 잘라오기 text.txt (슬레시 인덱스를 저장해둔것이니까 +1)
 						fileName = item.getName().substring(index + 1);
-						// 경로 + 구분자 + 파일이름.확장자
 						File uploadFile = new File(realSavePath+separator+fileName);
-						//업로드 된 파일을 저장소 디렉터리에 저장. 임시파일로 저장된 경우 임시파일을 실제 파일명으로 변경함.
 						item.write(uploadFile);
-						//uploadFile 을 vo 에 저장 -> while로 저장
 						if(uploadFile.toString() != null && !uploadFile.toString().equals("")) {
-							FileNameCheck = true;
+							boardFileUploadVO = new BoardFileUploadVO();
+							boardFileUploadVO.setFileName(savePath+fileName);
+							boardFileUploadVO.setFileSize(item.getSize());
+							boardFileUploadVO.setRealSavePath(realSavePath+separator+fileName);
+							
+							listBoardFileUploadVO.add(boardFileUploadVO);
 						}
 					}
 				}//end of else
-				//모든 값 넣어서 저장
-				if(FileNameCheck && title != null && content != null && id != null ) {
-					vo = new BoardVO();
-					vo.setTitle(title);
-					vo.setContent(content);
-					vo.setId(id);
-					vo.setFileName(savePath+fileName);
-					
-					listBoardVO.add(vo);
-					FileNameCheck = false;
-				}
 			}
+			if(title != null && content != null && id != null ) {
+				boardVO = new BoardVO();
+				boardVO.setTitle(title);
+				boardVO.setContent(content);
+				boardVO.setId(id);
+			}
+			Long no = ((BoardVO)Execute.service(boardWriteService3, boardVO)).getNo();
+			Integer reuslt = 0;
+			reuslt = (Integer) Execute.service(boardFileUploadService, new Object[] {listBoardFileUploadVO,no});
 			
-			Execute.service(boardWriteService2, listBoardVO);
-			//이동
-//			response.sendRedirect("list.jsp?perPageNum"+strPerPageNum);
 			//redirect: - url 이동 , 없으면 jsp 로 이동
 			jsp = "redirect:list.do?perPageNum="+strPerPageNum;
 			break;
 
 		case "/view.do":
 			String noStr = request.getParameter("no");
-			long no = Long.parseLong(noStr);
+			no = Long.parseLong(noStr);
 
 			String strInc = request.getParameter("inc");
 			int inc = Integer.parseInt(strInc);

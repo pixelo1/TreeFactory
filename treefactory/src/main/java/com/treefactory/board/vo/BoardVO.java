@@ -1,6 +1,6 @@
 package com.treefactory.board.vo;
 
-public class BoardVO {
+public class BoardVO{
 
 	private long no;
 	private String title, content, id, writeDate, updateDate, fileName;
