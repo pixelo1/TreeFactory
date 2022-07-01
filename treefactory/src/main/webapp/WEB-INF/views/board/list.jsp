@@ -125,9 +125,6 @@ cursor: pointer;
 			<div class="col-md-8">
 			<categoryPageNav:categoryPageNav categoryPageObject="${categoryPageObject }" listURI="list.do" query="&category=${categoryPageObject.category }"/>
 			</div>
-<!-- 			<div class="col-md-4 text-right"> -->
-<%-- 			<a href="writeForm.do?perPageNum=${categoryPageObject.perPageNum }" id="writebtn" class="btn btn-default">글쓰기</a> --%>
-<!-- 			</div> -->
 			<div class="col-md-4 text-right">
 			<a href="writeForm.do?perPageNum=${categoryPageObject.perPageNum }" id="writebtn" class="btn btn-default">글쓰기</a>
 			</div>

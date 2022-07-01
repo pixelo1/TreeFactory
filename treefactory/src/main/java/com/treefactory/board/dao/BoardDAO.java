@@ -862,5 +862,48 @@ public class BoardDAO {
 		return result;
 	}
 	
+	// 데이터가 삭제가 됐으면 1이 안됐으면 0이 리턴된다.
+	public Integer deleteAllFile(Long boardNo) throws Exception{
+		// return 타입과 동일한변수 선언
+		Integer result = 0;
+		
+		// 데이터처리
+		try {
+			// 1. 드라이버 확인
+			con = DB.getConnection();
+//			System.out.println("연결 완료");
+			// 3. SQL 작성
+			String sql = "DELETE FROM board_fileUpload WHERE boardNo = ?";
+			// 4. 실행객체 & 데이터 세팅
+			pstmt = con.prepareStatement(sql);
+			pstmt.setLong(1, boardNo);
+			// 5. 실행
+			// - select처리 : executeQuery() - rs가 나온다. insert,update,delete 처리 : executeUpdate() - int가 나온다.
+			result = pstmt.executeUpdate();
+			// 6. 표시 또는 담기
+			if(result >= 1)
+				System.out.println("해당게시판 모든파일 DB 처리 완료");
+			else
+				System.out.println("해당게시판 모든파일 DB 처리가 되지 않았습니다. 글번호를 확인해 주세요.");
+		} catch (Exception e) {
+			// 개발자를 위한 코드
+			e.printStackTrace();
+			throw new Exception("해당게시판 모든파일 DB 처리 중 오류. - " + e.getMessage());
+		} finally {
+			try {
+				// 7. 닫기
+				//  - commit 까지 완료하고 나온다. - auto commit
+				if(con != null) con.close();
+				if(pstmt != null) pstmt.close();
+			} catch (Exception e) {
+				// 개발자를 위한 코드
+				e.printStackTrace();
+				throw new Exception("해당게시판 모든파일 객체를 닫는 중 오류. - " + e.getMessage());
+			}
+		}
+		
+		return result;
+	}
+	
 
 }

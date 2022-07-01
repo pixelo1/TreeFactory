@@ -13,6 +13,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+import com.treefactory.board.service.BoardDeleteAllFileService;
 import com.treefactory.board.service.BoardDeleteService;
 import com.treefactory.board.service.BoardDeleteUploadFileService;
 import com.treefactory.board.service.BoardFileUploadService;
@@ -46,6 +47,7 @@ public class BoardController implements Controller {
 	private BoardFileUploadService boardFileUploadService;
 	private BoardViewUploadFileService boardViewUploadFileService;
 	private BoardDeleteUploadFileService boardDeleteUploadFileService;
+	private BoardDeleteAllFileService boardDeleteAllFileService;
 	//댓글
 	private ReplyListService replyListService;
 	
@@ -101,6 +103,10 @@ public class BoardController implements Controller {
 		this.boardDeleteUploadFileService = boardDeleteUploadFileService;
 	}
 
+	public void setBoardDeleteAllFileService(BoardDeleteAllFileService boardDeleteAllFileService) {
+		this.boardDeleteAllFileService = boardDeleteAllFileService;
+	}
+
 	@Override
 	public String execute(HttpServletRequest request) throws Exception{
 		
@@ -140,10 +146,6 @@ public class BoardController implements Controller {
 		case "/writeForm.do":
 			
 			jsp = "board/writeForm";
-			break;
-		case "/writeForm2.do":
-			
-			jsp = "board/writeForm2";
 			break;
 
 		case "/write.do":
@@ -360,9 +362,9 @@ public class BoardController implements Controller {
 				List<String> listDel = new ArrayList<String>();
 				int delIndex = 0;
 				categoryPageObject = new CategoryPageObject();
-				
 				boolean fileUploadCheck = false;
 				boolean delcheck = false;
+				
 				for(FileItem item : items) {
 					if(item.isFormField()) {
 						//%s (문자열 형식)/ 업로드된 파일이 단순 text데이터면 실행
@@ -457,6 +459,8 @@ public class BoardController implements Controller {
 						Execute.service(boardDeleteUploadFileService, boardFileUploadVO);
 					}
 				}
+				//파일만 삭제
+				
 				jsp = "redirect:view.do?no="+no+"&inc=0&page="+categoryPageObject.getPage()+"&perPageNum="+categoryPageObject.getPerPageNum()+"&key="+categoryPageObject.getKey()+"&word="+categoryPageObject.getWord();
 				
 				break;
@@ -483,7 +487,29 @@ public class BoardController implements Controller {
 				
 				result = (Integer)Execute.service(boardDeleteService, no);
 
-				jsp= "redirect:list.do?&perPageNum="+strPerPageNum;
+				jsp= "redirect:list.do?perPageNum="+strPerPageNum;
+				
+				break;
+			case "/deleteAllFile.do":
+				//아직 만드는중
+				noStr = request.getParameter("no");
+				no = Long.parseLong(noStr);
+				
+				del= null;
+				
+				listBoardFileUploadVO = (List<BoardFileUploadVO>) Execute.service(boardViewUploadFileService, no);
+				
+				for (BoardFileUploadVO fileVO : listBoardFileUploadVO) {
+					if(fileVO.getFileName() != null && !fileVO.equals("")) {
+						new File(request.getServletContext().getRealPath(fileVO.getFileName())).delete();
+						//					delFile = new File(request.getServletContext().getRealPath(del));
+					}
+					
+				}
+				
+				result = (Integer)Execute.service(boardDeleteService, no);
+				
+				jsp= "redirect:view.do?no="+no;
 				
 				break;
 			

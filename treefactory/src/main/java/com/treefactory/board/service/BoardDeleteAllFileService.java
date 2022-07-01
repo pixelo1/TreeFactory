@@ -3,7 +3,7 @@ package com.treefactory.board.service;
 import com.treefactory.board.dao.BoardDAO;
 import com.treefactory.main.Service;
 
-public class BoardDeleteService implements Service{
+public class BoardDeleteAllFileService implements Service{
 
 	
 	private BoardDAO dao;
@@ -20,7 +20,7 @@ public class BoardDeleteService implements Service{
 		
 		long no = (long)obj;
 		// dao 클래스를 생성하고 메서드를 호출한다.
-		return dao.deleteAllFile(no);
+		return dao.delete(no);
 	}
 	
 }

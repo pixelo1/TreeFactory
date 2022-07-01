@@ -44,6 +44,17 @@ function sendData() {
 	
 	
 }
+$(function(){
+	//아직 진행중
+	$("#deleteFileBtn").click(function(){
+		if(confirm("파일전부삭제")){
+			var deleteCheck = "1";
+			$("#deleteCheck").val(deleteCheck);
+		$("#updateForm").submit();
+			
+		};
+	})
+});
 </script>
 </head>
 <body>
@@ -53,13 +64,13 @@ function sendData() {
 <h2>일반게시판 수정</h2>
 <!-- method- 데이터를 넘기는 방식 - get:주소뒤에,post:눈에 안보이게 전달 -->
 <!--  action을 생략가능 - 생략시 같은주소를 호출한다 현재 writeForm을 호출 -->
-<form action="update.do" method="post"  enctype="multipart/form-data">
+<form action="update.do" method="post"  enctype="multipart/form-data" id="updateForm">
 <input name="page" value="${pageObject.page }" type="hidden">
 <input name="perPageNum" value="${pageObject.perPageNum }" type="hidden">
 <input name="key" value="${pageObject.key }" type="hidden">
 <input name="word" value="${pageObject.word }" type="hidden">
 <input name="category" value="${categoryPageObject.category }" type="hidden">
-
+<input type="hidden" name="deleteCheck" id="deleteCheck">
 	<div class="form-group">
     <label for="no">번호</label>
     <input type="text" class="form-control" id="no" name="no" value="${vo.no}" readonly="readonly">
@@ -91,6 +102,7 @@ function sendData() {
 			<button type="submit" class="btn btn-default">등록</button>
 			<button type="reset" class="btn btn-default">새로고침</button>
 			<button type="button" onclick="history.back()" class="btn btn-default">취소</button>
+			<button type="button" class="btn btn-default" id="deleteFileBtn">파일삭제</button>
 </form>
 </div>
 </body>

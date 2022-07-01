@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -65,13 +66,13 @@ function sendData() {
 	    <textarea rows="7" placeholder="내용 입력" name="content" id="content" class="form-control"></textarea>
 	    
 	  </div>
-	  <div class="form-group">
-	    <label for="image">이미지</label>
-	    <input type="file" class="form-control" id="image" name="image">
-	  </div>
 	<div class="form-group">
 	    <label for="writer">작성자</label>
 	    <input type="text" class="form-control" id="writer" name="writer" maxlength="100">
+	  </div>
+	  <div class="form-group">
+	    <label for="images">이미지</label>
+	    <input type="file" class="form-control" id="images" name="images" multiple>
 	  </div>
 			<!-- submit : 데이터 전달 , reset : 처음상태, button: 동작이없다(js로 동작만들어서 사용가능) -->
 			<button type="submit" onclick="return sendData();" class="btn btn-default">등록</button>
