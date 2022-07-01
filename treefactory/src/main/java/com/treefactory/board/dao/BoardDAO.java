@@ -326,6 +326,70 @@ public class BoardDAO {
 	}
 
 	
+	// 게시판 글보기
+	// DB 쿼리 : SELECT no, title, content, writer, writeDate, hit FROM board WHERE no = 2;
+	// 글번호는 받아서 처리한다. - long no
+	public List<BoardFileUploadVO> viewUploadFile(long no) throws Exception{
+		// 리턴 타입과 동일한 변수 - 데이터가 있다면 데이터를 채워서 리턴시킨다.
+		List<BoardFileUploadVO> listBoardFileUploadVO = null;
+		BoardFileUploadVO vo = null;
+		
+		System.out.println("BoardDAO.view().no : " + no + " --------------------");
+		
+		try {
+			// 1. 드라이버 확인
+			con = DB.getConnection();
+//			System.out.println("DB 연결 완료");
+			// 3. sql 작성 - 변경되는 데이터는 ? (대체문자)로 작성
+			String sql = " select orgFileName, fileName, fileSize from board_fileUpload where boardNo = ? ";
+			// 4. 실행 객체 & 데이터세팅 - no
+			pstmt = con.prepareStatement(sql);
+			//   데이터 타입에 따른 메서드를 선택해서 세팅해준다.
+			pstmt.setLong(1, no);
+//			System.out.println("실행 객체 생성 완료");
+			// 5. 실행 
+			// - select처리 : executeQuery() - rs가 나온다. insert,update,delete 처리 : executeUpdate() - int가 나온다.
+			rs = pstmt.executeQuery();
+//			System.out.println("DB 쿼리 실행 완료");
+			// 6. 데이터 표시나 데이터 담기 - 만약(if)에 rs가 null이 아니고 데이터가 있는 경우(if) 데이터 가져온다.
+			if(rs != null) {
+
+				while(rs.next()) {
+					if(listBoardFileUploadVO==null)listBoardFileUploadVO = new ArrayList<BoardFileUploadVO>();
+				vo = new BoardFileUploadVO();
+				vo.setOrgFileName(rs.getString("orgFileName"));
+				vo.setFileName(rs.getString("fileName"));
+				vo.setFileSize(rs.getLong("fileSize"));
+				
+				listBoardFileUploadVO.add(vo);
+				}
+			}
+		} catch (Exception e) {
+			// 개발자를 위한 코드
+			e.printStackTrace();
+			// Controller에서 예외처리를 시키기 위해서 예외를 생성하고 던진다.
+			throw new Exception("게시판 이미지view DB 처리 중 오류 발생 - " + e.getMessage());
+		} finally {
+			try {
+				// 7. 닫기
+				if(con != null) con.close();
+				if(pstmt != null) pstmt.close();
+				if(rs != null) rs.close();
+			} catch (Exception e) {
+				// 개발자를 위한 코드
+				e.printStackTrace();
+				// Controller에서 예외처리를 시키기 위해서 예외를 생성하고 던진다.
+				throw new Exception("게시판 이미지view DB 자원 닫기 중 오류 발생 - " + e.getMessage());
+			}
+		}
+		
+		// 데이터 확인
+		System.out.println(vo);
+		
+		return listBoardFileUploadVO;
+	}
+	
+	
 	
 	// 게시판 글보기 조회수 1증가
 	// DB 쿼리 : UPDATE board SET hit = hit + 1 WHERE no = ?

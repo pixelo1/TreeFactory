@@ -18,6 +18,7 @@ import com.treefactory.board.service.BoardFileUploadService;
 import com.treefactory.board.service.BoardListService;
 import com.treefactory.board.service.BoardUpdateService;
 import com.treefactory.board.service.BoardViewService;
+import com.treefactory.board.service.BoardViewUploadFileService;
 import com.treefactory.board.service.BoardWriteService;
 import com.treefactory.board.service.BoardWriteService2;
 import com.treefactory.board.service.BoardWriteService3;
@@ -42,6 +43,7 @@ public class BoardController implements Controller {
 	private BoardWriteService2 boardWriteService2;
 	private BoardWriteService3 boardWriteService3;
 	private BoardFileUploadService boardFileUploadService;
+	private BoardViewUploadFileService boardViewUploadFileService;
 	//댓글
 	private ReplyListService replyListService;
 	
@@ -85,6 +87,12 @@ public class BoardController implements Controller {
 	
 	public void setBoardFileUploadService(BoardFileUploadService boardFileUploadService) {
 		this.boardFileUploadService = boardFileUploadService;
+	}
+
+	
+	
+	public void setBoardViewUploadFileService(BoardViewUploadFileService boardViewUploadFileService) {
+		this.boardViewUploadFileService = boardViewUploadFileService;
 	}
 
 	@Override
@@ -300,6 +308,8 @@ public class BoardController implements Controller {
 
 			//게시판 글보기 데이터 가져오기
 			vo = (BoardVO) Execute.service(boardViewService, new Object[]{no, inc});
+			
+			listBoardFileUploadVO = (List<BoardFileUploadVO>) Execute.service(boardViewUploadFileService, no);
 			//게시판 댓글 리스트 데이터 가져오기 - board/view.jsp - com.webjjang.reply.service.ReplyListService -> dao.ReplyDAO
 			@SuppressWarnings("unchecked") 
 			List<ReplyVO> list = (List<ReplyVO>) Execute.service(replyListService, replyPageObject);
@@ -313,6 +323,7 @@ public class BoardController implements Controller {
 			//EL 객체를 이용해서 데이터 표시하고자 한다면 JSP 저장 기본 객체 중 하나에 저장이 되어 있어야만 한다.
 			//application(서버실행시) or session(상용자가 요청시생김) or request(데이터를뿌려줄때만 쓰고 버린다)  or pagecontext(해당하는jsp에서만 쓴다)
 			request.setAttribute("vo", vo);
+			request.setAttribute("listBoardFileUploadVO", listBoardFileUploadVO);
 			request.setAttribute("pageObject", pageObject);
 			request.setAttribute("replyPageObject", replyPageObject);
 			request.setAttribute("list", list);

@@ -20,6 +20,7 @@ import com.treefactory.board.service.BoardFileUploadService;
 import com.treefactory.board.service.BoardListService;
 import com.treefactory.board.service.BoardUpdateService;
 import com.treefactory.board.service.BoardViewService;
+import com.treefactory.board.service.BoardViewUploadFileService;
 import com.treefactory.board.service.BoardWriteService;
 import com.treefactory.board.service.BoardWriteService2;
 import com.treefactory.board.service.BoardWriteService3;
@@ -93,6 +94,9 @@ public class DisPacherServlet extends HttpServlet {
 		BoardFileUploadService boardFileUploadService = new BoardFileUploadService();
 		boardFileUploadService.setDao(boardDAO);
 		
+		BoardViewUploadFileService boardViewUploadFileService = new BoardViewUploadFileService();
+		boardViewUploadFileService.setDao(boardDAO);
+		
 		BoardController boardController = new BoardController();
 
 		boardController.setBoardListService(boardListService);
@@ -103,6 +107,7 @@ public class DisPacherServlet extends HttpServlet {
 		boardController.setBoardWriteService2(boardWriteService2);
 		boardController.setBoardWriteService3(boardWriteService3);
 		boardController.setBoardFileUploadService(boardFileUploadService);
+		boardController.setBoardViewUploadFileService(boardViewUploadFileService);
 		//url 매핑은 맨아래에
 
 		

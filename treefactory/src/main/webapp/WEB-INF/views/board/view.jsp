@@ -144,7 +144,12 @@
 			</tr>
 			<tr>
 				<th>이미지</th>
-				<td><img alt="" src="${vo.fileName }"> </td>				
+				<td>
+				<c:forEach items="${listBoardFileUploadVO }" var="fileVO">
+				<img alt="" src="${fileVO.fileName }"><p>${fileVO.orgFileName }</p> 
+				
+				</c:forEach>
+				</td>				
 			</tr>
 			<tr>
 				<th>작성자</th>
