@@ -131,6 +131,7 @@
 						<input type="hidden" name="perPageNum" value="${pageObject.perPageNum }" >
 						<input type="hidden" name="key" value="${pageObject.key }" >
 						<input type="hidden" name="word" value="${pageObject.word }" >
+						<input name="category" value="${category }" type="hidden">
 	
 						<div class="input-group">
 							<textarea rows="3" name="content" class="form-control" style="resize: none;" id="content" style="resize"></textarea>
@@ -168,7 +169,7 @@
 						</c:forEach>
 					<div>
 					<!-- 댓글의 페이지 정보는 query -->
-						<pageNav:replyPageNav listURI="view.do" pageObject="${pageObject }" replyPageObject="${replyPageObject }"/>
+						<pageNav:replyPageNav listURI="view.do" pageObject="${pageObject }" replyPageObject="${replyPageObject }" query="&category=${category }"/>
 					</div>
 					
 					</c:if>

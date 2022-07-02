@@ -11,6 +11,7 @@ import com.treefactory.reply.service.ReplyDeleteService;
 import com.treefactory.reply.service.ReplyUpdateService;
 import com.treefactory.reply.service.ReplyWriteService;
 import com.treefactory.reply.vo.ReplyVO;
+import com.treefactory.util.CategoryPageObject;
 import com.treefactory.util.ReplyPageObject;
 import com.webjjang.util.PageObject;
 
@@ -64,8 +65,15 @@ public class ReplyController implements Controller {
 			//session에서 login 꺼내면 loginVO가 나옴 로그인할때 저장을 그렇게해둠
 			String id = "test";
 
-
-			PageObject pageObject = PageObject.getInstance(request);
+			CategoryPageObject categoryPageObject = CategoryPageObject.getInstance(request);
+			String strCategory = request.getParameter("category");
+			if(strCategory == null || strCategory.equals("")) {
+				categoryPageObject.setCategory("all");
+			}
+			else{categoryPageObject.setCategory(strCategory);
+			}
+			
+//			PageObject pageObject = PageObject.getInstance(request);
 			//jsp(Controller) - BoardWriteService - BoardDAO.write(vo)
 			//BoardVO 미리 생성해둠 파라미터값으로 넘겨주려고
 			ReplyVO vo = new ReplyVO();
@@ -78,10 +86,13 @@ public class ReplyController implements Controller {
 			Execute.service(replyWriteService, vo);
 
 				jsp = "redirect:/board/view.do?no="+vo.getNo()+"&inc=0"
-				+"&page="+pageObject.getPage()
-				+"&perPageNum="+pageObject.getPerPageNum()
-				+"&key="+pageObject.getKey()
-				+"&word="+pageObject.getWord();
+				+"&page="+categoryPageObject.getPage()
+				+"&perPageNum="+categoryPageObject.getPerPageNum()
+				+"&key="+categoryPageObject.getKey()
+				+"&word="+categoryPageObject.getWord()
+				+"&category="+categoryPageObject.getCategory()
+				
+				;
 			break;
 
 			
@@ -112,8 +123,8 @@ public class ReplyController implements Controller {
 						+"&key="+request.getParameter("key")
 						+"&word="+request.getParameter("word")
 						+"&replyPage="+request.getParameter("replyPage")
+						+"&category="+request.getParameter("category")
 					;
-				
 				break;
 				
 			case "/delete.do":
@@ -139,7 +150,9 @@ public class ReplyController implements Controller {
 					+"&perPageNum="+request.getParameter("perPageNum")
 					+"&key="+request.getParameter("key")
 					+"&word="+request.getParameter("word")
-					+"&replyPage="+request.getParameter("replyPage") ;
+					+"&replyPage="+request.getParameter("replyPage") 
+					+"&category="+request.getParameter("category")
+					;
 				
 				break;
 			

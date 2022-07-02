@@ -50,7 +50,7 @@ $(function(){
 		if(confirm("파일전부삭제")){
 			var inc = "0";
 			var no = "${vo.no}";
-			location = "deleteAllFile.do?no="+no+"&inc="+inc;
+			location = "deleteAllFile.do?no="+no+"&inc="+inc+"&category=${param.category }";
 			
 		};
 	})
@@ -69,7 +69,7 @@ $(function(){
 <input name="perPageNum" value="${pageObject.perPageNum }" type="hidden">
 <input name="key" value="${pageObject.key }" type="hidden">
 <input name="word" value="${pageObject.word }" type="hidden">
-<input name="category" value="${categoryPageObject.category }" type="hidden">
+<input name="category" value="${param.category }" type="hidden">
 <input type="hidden" name="deleteCheck" id="deleteCheck">
 	<div class="form-group">
     <label for="no">번호</label>

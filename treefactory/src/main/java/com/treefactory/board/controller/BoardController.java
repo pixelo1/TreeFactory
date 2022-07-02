@@ -257,6 +257,7 @@ public class BoardController implements Controller {
 			String strInc = request.getParameter("inc");
 			int inc = Integer.parseInt(strInc);
 
+			String category = request.getParameter("category");
 			//request는 요청하는 것이 모두 담겨있음 
 			//"location='view.jsp?no=1'"
 			//전달 받은 데이터 받기 /무조건 문자열로받아야함 / no 라는 키로 넘긴다(주소창에 나옴)
@@ -295,6 +296,7 @@ public class BoardController implements Controller {
 			request.setAttribute("listBoardFileUploadVO", listBoardFileUploadVO);
 			request.setAttribute("pageObject", pageObject);
 			request.setAttribute("replyPageObject", replyPageObject);
+			request.setAttribute("category", category);
 			request.setAttribute("list", list);
 			
 			jsp = "board/view";
@@ -302,7 +304,7 @@ public class BoardController implements Controller {
 			
 			case "/updateForm.do":
 			    pageObject = PageObject.getInstance(request);
-			    
+			    category = request.getParameter("category");
 			    noStr = request.getParameter("no");
 			    no = Long.parseLong(noStr);
 
@@ -313,6 +315,7 @@ public class BoardController implements Controller {
 			    //EL 객체를 이용해서 데이터 표시하고자 한다면 JSP 저장 기본 객체 중 하나에 저장이 되어 있어야만 한다.
 			    //application(서버실행시) or session(상용자가 요청시생김) or request(데이터를뿌려줄때만 쓰고 버린다)  or pagecontext(해당하는jsp에서만 쓴다)
 			    request.setAttribute("pageObject", pageObject);
+			    request.setAttribute("category", category);
 			    request.setAttribute("vo", Execute.service(boardViewService, new Object[]{no, 0}));
 			    request.setAttribute("listBoardFileUploadVO", (List<BoardFileUploadVO>) Execute.service(boardViewUploadFileService, no));
 				
@@ -354,6 +357,7 @@ public class BoardController implements Controller {
 				fileName = null;
 				orgFileName = null;
 				no = null;
+				category = null;
 				strPerPageNum = null;
 				String strNo = null;
 				Long perPageNum = null;
@@ -385,6 +389,8 @@ public class BoardController implements Controller {
 							no = Long.parseLong(strNo);
 						}else if (item.getFieldName() == "perPageNum" ||(item.getFieldName()).equals("perPageNum")) {
 							categoryPageObject.setPerPageNum(perPageNum = Long.parseLong(strPerPageNum =item.getString()));
+						}else if (item.getFieldName() == "category" ||(item.getFieldName()).equals("category")) {
+							categoryPageObject.setCategory(category =item.getString());
 						}
 						
 						else if (item.getFieldName() == "page" ||(item.getFieldName()).equals("page")) {
@@ -461,7 +467,7 @@ public class BoardController implements Controller {
 				}
 				//파일만 삭제
 				
-				jsp = "redirect:view.do?no="+no+"&inc=0&page="+categoryPageObject.getPage()+"&perPageNum="+categoryPageObject.getPerPageNum()+"&key="+categoryPageObject.getKey()+"&word="+categoryPageObject.getWord();
+				jsp = "redirect:view.do?no="+no+"&inc=0&page="+categoryPageObject.getPage()+"&perPageNum="+categoryPageObject.getPerPageNum()+"&key="+categoryPageObject.getKey()+"&word="+categoryPageObject.getWord()+"&category="+categoryPageObject.getCategory();
 				
 				break;
 
@@ -498,10 +504,11 @@ public class BoardController implements Controller {
 				strInc = request.getParameter("inc");
 				inc = Integer.parseInt(strInc);
 				
+				category = request.getParameter("category");
 				del= null;
 				
 				listBoardFileUploadVO = (List<BoardFileUploadVO>) Execute.service(boardViewUploadFileService, no);
-				
+				if(listBoardFileUploadVO != null) {
 				for (BoardFileUploadVO fileVO : listBoardFileUploadVO) {
 					if(fileVO.getFileName() != null && !fileVO.equals("")) {
 						new File(request.getServletContext().getRealPath(fileVO.getFileName())).delete();
@@ -509,10 +516,10 @@ public class BoardController implements Controller {
 					}
 					
 				}
-				
 				Execute.service(boardDeleteAllFileService, no);
+				}
 				
-				jsp= "redirect:view.do?no="+no+"&inc="+inc;
+				jsp= "redirect:view.do?no="+no+"&inc="+inc+"&category="+category;
 				
 				break;
 			
