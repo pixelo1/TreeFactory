@@ -20,7 +20,7 @@ public class BoardDeleteAllFileService implements Service{
 		
 		long no = (long)obj;
 		// dao 클래스를 생성하고 메서드를 호출한다.
-		return dao.delete(no);
+		return dao.deleteAllFile(no);
 	}
 	
 }

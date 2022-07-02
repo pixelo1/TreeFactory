@@ -48,9 +48,9 @@ $(function(){
 	//아직 진행중
 	$("#deleteFileBtn").click(function(){
 		if(confirm("파일전부삭제")){
-			var deleteCheck = "1";
-			$("#deleteCheck").val(deleteCheck);
-		$("#updateForm").submit();
+			var inc = "0";
+			var no = "${vo.no}";
+			location = "deleteAllFile.do?no="+no+"&inc="+inc;
 			
 		};
 	})
@@ -102,8 +102,8 @@ $(function(){
 			<button type="submit" class="btn btn-default">등록</button>
 			<button type="reset" class="btn btn-default">새로고침</button>
 			<button type="button" onclick="history.back()" class="btn btn-default">취소</button>
-			<button type="button" class="btn btn-default" id="deleteFileBtn">파일삭제</button>
 </form>
+			<button type="button" class="btn btn-default" id="deleteFileBtn">파일삭제</button>
 </div>
 </body>
 </html>

@@ -495,6 +495,9 @@ public class BoardController implements Controller {
 				noStr = request.getParameter("no");
 				no = Long.parseLong(noStr);
 				
+				strInc = request.getParameter("inc");
+				inc = Integer.parseInt(strInc);
+				
 				del= null;
 				
 				listBoardFileUploadVO = (List<BoardFileUploadVO>) Execute.service(boardViewUploadFileService, no);
@@ -507,9 +510,9 @@ public class BoardController implements Controller {
 					
 				}
 				
-				result = (Integer)Execute.service(boardDeleteService, no);
+				Execute.service(boardDeleteAllFileService, no);
 				
-				jsp= "redirect:view.do?no="+no;
+				jsp= "redirect:view.do?no="+no+"&inc="+inc;
 				
 				break;
 			
