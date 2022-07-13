@@ -210,7 +210,7 @@ public class BoardController implements Controller {
 						fileName = item.getName().substring(index + 1,extensionIndex);
 						System.out.println("확장자 제외한 파일이름"+fileName);
 						//랜덤함수를통한 랜덤화
-						fileName = UUID.randomUUID().toString().replaceAll("-", "")+extension;
+						fileName = UUID.randomUUID().toString().replaceAll("-", "")+"_"+fileName+extension;
 						
 //						File uploadFile = new File(realSavePath+separator+fileName);
 						File uploadFile = new File(realSavePath+fileName);

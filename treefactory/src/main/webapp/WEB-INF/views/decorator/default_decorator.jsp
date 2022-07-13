@@ -89,9 +89,9 @@ article {
 				</div>
 				<div class="collapse navbar-collapse" id="myNavbar">
 					<ul class="nav navbar-nav">
-						<li><a href="/notice/list.do">공지사항</a></li>
+<!-- 						<li><a href="/notice/list.do">공지사항</a></li> -->
 						<li><a href="/board/list.do">게시판</a></li>
-						<li><a href="/image/list.do">갤러리</a></li>
+<!-- 						<li><a href="/image/list.do">갤러리</a></li> -->
 						<li><a href="/qna/list.do">Q &amp; A</a></li>
 						<c:if test="${!empty login }">
 							<li><a href="/message/list.do">메시지</a></li>
