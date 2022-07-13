@@ -23,8 +23,6 @@ import com.treefactory.board.service.BoardListService;
 import com.treefactory.board.service.BoardUpdateService;
 import com.treefactory.board.service.BoardViewService;
 import com.treefactory.board.service.BoardViewUploadFileService;
-import com.treefactory.board.service.BoardWriteService;
-import com.treefactory.board.service.BoardWriteService2;
 import com.treefactory.board.service.BoardWriteService3;
 import com.treefactory.reply.controller.ReplyController;
 import com.treefactory.reply.dao.ReplyDAO;
@@ -78,8 +76,6 @@ public class DisPacherServlet extends HttpServlet {
 		BoardViewService boardViewService = new BoardViewService();
 		boardViewService.setDao(boardDAO);
 		
-		BoardWriteService boardWriteService = new BoardWriteService();
-		boardWriteService.setDao(boardDAO);
 		
 		BoardUpdateService boardUpdateService = new BoardUpdateService();
 		boardUpdateService.setDao(boardDAO);
@@ -87,8 +83,6 @@ public class DisPacherServlet extends HttpServlet {
 		BoardDeleteService boardDeleteService = new BoardDeleteService();
 		boardDeleteService.setDao(boardDAO);
 		
-		BoardWriteService2 boardWriteService2 = new BoardWriteService2();
-		boardWriteService2.setDao(boardDAO);
 		
 		BoardWriteService3 boardWriteService3 = new BoardWriteService3();
 		boardWriteService3.setDao(boardDAO);
@@ -109,10 +103,8 @@ public class DisPacherServlet extends HttpServlet {
 
 		boardController.setBoardListService(boardListService);
 		boardController.setBoardViewService(boardViewService);
-		boardController.setBoardWriteService(boardWriteService);
 		boardController.setBoardUpdateService(boardUpdateService);
 		boardController.setBoardDeleteService(boardDeleteService);
-		boardController.setBoardWriteService2(boardWriteService2);
 		boardController.setBoardWriteService3(boardWriteService3);
 		boardController.setBoardFileUploadService(boardFileUploadService);
 		boardController.setBoardViewUploadFileService(boardViewUploadFileService);

@@ -51,61 +51,61 @@ public class AuthorityFilter extends HttpFilter implements Filter {
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		// place your code here
-
-		//캐스팅하기 쉽게 변수처리함
-		HttpServletRequest req = (HttpServletRequest)request;
-		
-		//ServletRequest 에는 path 메서드가 없다 서버가 없어서 
-		//캐스팅 해주면 나온다 HttpServletRequest로 캐스팅해준다
-		String uri = req.getServletPath();
-//		String query = req.getQueryString();
-		
-		System.out.println("AuthorityFilter.doFilter().uri" + uri);
-		
-		//uri 를 넣으면 권한번호가 나온다
-		Integer pageAuthority = authorityMap.get(uri);
-		
-		//request안에 session을 집어넣어 놓는다(but http에 저장되어있는 메서드라 캐스팅 해줘야함)
-		//로그인이 필요한 경우
-		if(pageAuthority != null) {
-			HttpSession session = req.getSession();
-			//vo가 null 이면 로그인 하지 않았다 -> login 페이지로 이동시킨다.
-			//object에서 바로 loginVO 로 갈수 없어서 캐스팅한다
-			LoginVO loginVO = (LoginVO) session.getAttribute("login");
-			
-			//response.sendredirect 타입이 달라서 없음 
-			//아이디가 없으면 로그인 창으로 보내고 return
-			if(loginVO == null) {
-				
-				//uri+?+query -> session에 저장해 놓으면 로그인 후 가려는 페이지로 이동이 가능하다
-				((HttpServletResponse)response).sendRedirect("/member/loginForm.do");
-				//session에 저장
-//				req.setAttribute("", uri+"?"+query);
-				//더이상 처리되지않도록 return 시킨다
-				return;
-				
-			}
-			
-			//관리자 페이지 권한 처리
-			if(pageAuthority == 9 ) {
-				//관리자가 아닌경우 (저장된 vo에서 등급번호 꺼내서 비교)
-				if(loginVO.getGradeNo() < 9) {
-					((HttpServletResponse)response).sendRedirect("/error/authorityError.do");
-				return;
-				}
-				
-			}
-			
-			
-		}
-		
-		//서버없으면 uri 서버있으면 url
-		// pass the request along the filter chain
-		chain.doFilter(request, response);
-	}
+//	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+//		// TODO Auto-generated method stub
+//		// place your code here
+//
+//		//캐스팅하기 쉽게 변수처리함
+//		HttpServletRequest req = (HttpServletRequest)request;
+//		
+//		//ServletRequest 에는 path 메서드가 없다 서버가 없어서 
+//		//캐스팅 해주면 나온다 HttpServletRequest로 캐스팅해준다
+//		String uri = req.getServletPath();
+////		String query = req.getQueryString();
+//		
+//		System.out.println("AuthorityFilter.doFilter().uri" + uri);
+//		
+//		//uri 를 넣으면 권한번호가 나온다
+//		Integer pageAuthority = authorityMap.get(uri);
+//		
+//		//request안에 session을 집어넣어 놓는다(but http에 저장되어있는 메서드라 캐스팅 해줘야함)
+//		//로그인이 필요한 경우
+//		if(pageAuthority != null) {
+//			HttpSession session = req.getSession();
+//			//vo가 null 이면 로그인 하지 않았다 -> login 페이지로 이동시킨다.
+//			//object에서 바로 loginVO 로 갈수 없어서 캐스팅한다
+//			LoginVO loginVO = (LoginVO) session.getAttribute("login");
+//			
+//			//response.sendredirect 타입이 달라서 없음 
+//			//아이디가 없으면 로그인 창으로 보내고 return
+//			if(loginVO == null) {
+//				
+//				//uri+?+query -> session에 저장해 놓으면 로그인 후 가려는 페이지로 이동이 가능하다
+//				((HttpServletResponse)response).sendRedirect("/member/loginForm.do");
+//				//session에 저장
+////				req.setAttribute("", uri+"?"+query);
+//				//더이상 처리되지않도록 return 시킨다
+//				return;
+//				
+//			}
+//			
+//			//관리자 페이지 권한 처리
+//			if(pageAuthority == 9 ) {
+//				//관리자가 아닌경우 (저장된 vo에서 등급번호 꺼내서 비교)
+//				if(loginVO.getGradeNo() < 9) {
+//					((HttpServletResponse)response).sendRedirect("/error/authorityError.do");
+//				return;
+//				}
+//				
+//			}
+//			
+//			
+//		}
+//		
+//		//서버없으면 uri 서버있으면 url
+//		// pass the request along the filter chain
+//		chain.doFilter(request, response);
+//	}
 
 	/**
 	 * @see Filter#init(FilterConfig)

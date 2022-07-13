@@ -21,8 +21,6 @@ import com.treefactory.board.service.BoardListService;
 import com.treefactory.board.service.BoardUpdateService;
 import com.treefactory.board.service.BoardViewService;
 import com.treefactory.board.service.BoardViewUploadFileService;
-import com.treefactory.board.service.BoardWriteService;
-import com.treefactory.board.service.BoardWriteService2;
 import com.treefactory.board.service.BoardWriteService3;
 import com.treefactory.board.vo.BoardFileUploadVO;
 import com.treefactory.board.vo.BoardVO;
@@ -39,10 +37,8 @@ public class BoardController implements Controller {
 	//서버가 시작이 될 때 객체가 초기화 되어야만 한다 - DispacherServlet.init() 처리
 	private BoardListService boardListService;
 	private BoardViewService boardViewService;
-	private BoardWriteService boardWriteService;
 	private BoardUpdateService boardUpdateService;
 	private BoardDeleteService boardDeleteService;
-	private BoardWriteService2 boardWriteService2;
 	private BoardWriteService3 boardWriteService3;
 	private BoardFileUploadService boardFileUploadService;
 	private BoardViewUploadFileService boardViewUploadFileService;
@@ -59,9 +55,6 @@ public class BoardController implements Controller {
 		this.boardViewService = boardViewService;
 	}
 
-	public void setBoardWriteService(BoardWriteService boardWriteService) {
-		this.boardWriteService = boardWriteService;
-	}
 
 	public void setBoardUpdateService(BoardUpdateService boardUpdateService) {
 		this.boardUpdateService = boardUpdateService;
@@ -76,9 +69,6 @@ public class BoardController implements Controller {
 	}
 	
 	
-	public void setBoardWriteService2(BoardWriteService2 boardWriteService2) {
-		this.boardWriteService2 = boardWriteService2;
-	}
 	
 
 	//request를 전달받아 처리한다, 
@@ -183,6 +173,7 @@ public class BoardController implements Controller {
 			String fileName = null;
 			String strPerPageNum = null;
 			String orgFileName = null;
+			String category = null;
 			for(FileItem item : items) {
 				if(item.isFormField()) {
 					//%s (문자열 형식)/ 업로드된 파일이 단순 text데이터면 실행
@@ -200,6 +191,8 @@ public class BoardController implements Controller {
 						System.out.println("아이디 : "+id);
 					}else if (item.getFieldName() == "perPageNum" ||(item.getFieldName()).equals("perPageNum")) {
 						strPerPageNum = item.getString();
+					}else if (item.getFieldName() == "category" ||(item.getFieldName()).equals("category")) {
+						category = item.getString();
 					}
 					
 					
@@ -241,6 +234,7 @@ public class BoardController implements Controller {
 				boardVO.setTitle(title);
 				boardVO.setContent(content);
 				boardVO.setId(id);
+				boardVO.setCategory(category);
 			}
 			Long no = ((BoardVO)Execute.service(boardWriteService3, boardVO)).getNo();
 			Integer reuslt = 0;
@@ -257,7 +251,7 @@ public class BoardController implements Controller {
 			String strInc = request.getParameter("inc");
 			int inc = Integer.parseInt(strInc);
 
-			String category = request.getParameter("category");
+			category = request.getParameter("category");
 			//request는 요청하는 것이 모두 담겨있음 
 			//"location='view.jsp?no=1'"
 			//전달 받은 데이터 받기 /무조건 문자열로받아야함 / no 라는 키로 넘긴다(주소창에 나옴)

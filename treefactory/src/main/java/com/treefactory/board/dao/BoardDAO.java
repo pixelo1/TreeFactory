@@ -478,80 +478,20 @@ public class BoardDAO {
 		return result;
 	}
 
-	// 게시판 글쓰기
+	// 게시판 글쓰기 글업로드,사진업로드 따로운영해서 안씀
 	// DB 쿼리 : INSERT INTO board(no, title, content, writer) VALUES (board_seq.NEXTVAL, ?, ?, ?);
 	// 제목, 내용, 작성자 -> BoardVO 받아서 처리한다. - BoardVO vo
-	public Integer write(BoardVO vo) throws Exception{
-		// return 타입과 동일한변수 선언
-		Integer result = 0;
-		
-		// 데이터처리
-		try {
-			// 1. 드라이버 확인
-			con = DB.getConnection();
-			//System.out.println("연결 완료");
-			// 3. SQL 작성
-			String sql = "INSERT INTO board(no, title, content, id, fileName) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?)";
-			
-			// 4. 실행객체 & 데이터 세팅
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, vo.getTitle());
-			pstmt.setString(2, vo.getContent());
-			pstmt.setString(3, vo.getId());
-			pstmt.setString(4, vo.getFileName());
-
-			
-			System.out.println("BoardDAO.write().service" +sql);
-			
-			// 5. 실행
-			// - select처리 : executeQuery() - rs가 나온다. insert,update,delete 처리 : executeUpdate() - int가 나온다.
-			result = pstmt.executeUpdate();
-			// 6. 표시 또는 담기
-			//System.out.println("게시판 등록 DB 처리 완료");
-		} catch (Exception e) {
-			// 개발자를 위한 코드
-			e.printStackTrace();
-			throw new Exception("게시판 글등록 DB 처리 중 오류. - " + e.getMessage());
-		} finally {
-			try {
-				// 7. 닫기
-				//  - commit 까지 완료하고 나온다. - auto commit
-				if(con != null) con.close();
-				if(pstmt != null) pstmt.close();
-			} catch (Exception e) {
-				// 개발자를 위한 코드
-				e.printStackTrace();
-				throw new Exception("게시판 글등록 객체를 닫는 중 오류. - " + e.getMessage());
-			}
-		}
-		
-		return result;
-	}
-
-	// 스키마 나눠서 운용해서 안씀
-	public Integer writeMulti(List<BoardVO> listBoardVO) throws Exception{
-		// return 타입과 동일한변수 선언
-		Integer result = 0;
-		
-		// 데이터처리
-		try {
-			// 1. 드라이버 확인
-			con = DB.getConnection();
-			//System.out.println("연결 완료");
-			// 3. SQL 작성
-			String sql = "INSERT INTO board(no, title, content, id, fileName) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?)";
-			for(BoardVO vo : listBoardVO) {
-				
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, vo.getTitle());
-				pstmt.setString(2, vo.getContent());
-				pstmt.setString(3, vo.getId());
-				pstmt.setString(4, vo.getFileName());
-				
-				result += pstmt.executeUpdate();
-			}
-			
-//			String sql = "INSERT INTO board(no, title, content, id, fileName) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?)";
+//	public Integer write(BoardVO vo) throws Exception{
+//		// return 타입과 동일한변수 선언
+//		Integer result = 0;
+//		
+//		// 데이터처리
+//		try {
+//			// 1. 드라이버 확인
+//			con = DB.getConnection();
+//			//System.out.println("연결 완료");
+//			// 3. SQL 작성
+//			String sql = "INSERT INTO board(no, title, content, id, fileName, category) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?, ?)";
 //			
 //			// 4. 실행객체 & 데이터 세팅
 //			pstmt = con.prepareStatement(sql);
@@ -559,35 +499,96 @@ public class BoardDAO {
 //			pstmt.setString(2, vo.getContent());
 //			pstmt.setString(3, vo.getId());
 //			pstmt.setString(4, vo.getFileName());
+//			pstmt.setString(5, vo.getCategory());
+//
 //			
-			
-			System.out.println("BoardDAO.write().service" +sql);
-			System.out.println("BoardDAO.write().service result : " +result);
-			
-			// 5. 실행
-			// - select처리 : executeQuery() - rs가 나온다. insert,update,delete 처리 : executeUpdate() - int가 나온다.
+//			System.out.println("BoardDAO.write().service" +sql);
+//			
+//			// 5. 실행
+//			// - select처리 : executeQuery() - rs가 나온다. insert,update,delete 처리 : executeUpdate() - int가 나온다.
 //			result = pstmt.executeUpdate();
-			// 6. 표시 또는 담기
-			//System.out.println("게시판 등록 DB 처리 완료");
-		} catch (Exception e) {
-			// 개발자를 위한 코드
-			e.printStackTrace();
-			throw new Exception("게시판 글등록 DB 처리 중 오류. - " + e.getMessage());
-		} finally {
-			try {
-				// 7. 닫기
-				//  - commit 까지 완료하고 나온다. - auto commit
-				if(con != null) con.close();
-				if(pstmt != null) pstmt.close();
-			} catch (Exception e) {
-				// 개발자를 위한 코드
-				e.printStackTrace();
-				throw new Exception("게시판 글등록 객체를 닫는 중 오류. - " + e.getMessage());
-			}
-		}
-		
-		return result;
-	}
+//			// 6. 표시 또는 담기
+//			//System.out.println("게시판 등록 DB 처리 완료");
+//		} catch (Exception e) {
+//			// 개발자를 위한 코드
+//			e.printStackTrace();
+//			throw new Exception("게시판 글등록 DB 처리 중 오류. - " + e.getMessage());
+//		} finally {
+//			try {
+//				// 7. 닫기
+//				//  - commit 까지 완료하고 나온다. - auto commit
+//				if(con != null) con.close();
+//				if(pstmt != null) pstmt.close();
+//			} catch (Exception e) {
+//				// 개발자를 위한 코드
+//				e.printStackTrace();
+//				throw new Exception("게시판 글등록 객체를 닫는 중 오류. - " + e.getMessage());
+//			}
+//		}
+//		
+//		return result;
+//	}
+
+//	// 스키마 나눠서 운용해서 안씀
+//	public Integer writeMulti(List<BoardVO> listBoardVO) throws Exception{
+//		// return 타입과 동일한변수 선언
+//		Integer result = 0;
+//		
+//		// 데이터처리
+//		try {
+//			// 1. 드라이버 확인
+//			con = DB.getConnection();
+//			//System.out.println("연결 완료");
+//			// 3. SQL 작성
+//			String sql = "INSERT INTO board(no, title, content, id, fileName) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?)";
+//			for(BoardVO vo : listBoardVO) {
+//				
+//				pstmt = con.prepareStatement(sql);
+//				pstmt.setString(1, vo.getTitle());
+//				pstmt.setString(2, vo.getContent());
+//				pstmt.setString(3, vo.getId());
+//				pstmt.setString(4, vo.getFileName());
+//				
+//				result += pstmt.executeUpdate();
+//			}
+//			
+////			String sql = "INSERT INTO board(no, title, content, id, fileName) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?)";
+////			
+////			// 4. 실행객체 & 데이터 세팅
+////			pstmt = con.prepareStatement(sql);
+////			pstmt.setString(1, vo.getTitle());
+////			pstmt.setString(2, vo.getContent());
+////			pstmt.setString(3, vo.getId());
+////			pstmt.setString(4, vo.getFileName());
+////			
+//			
+//			System.out.println("BoardDAO.write().service" +sql);
+//			System.out.println("BoardDAO.write().service result : " +result);
+//			
+//			// 5. 실행
+//			// - select처리 : executeQuery() - rs가 나온다. insert,update,delete 처리 : executeUpdate() - int가 나온다.
+////			result = pstmt.executeUpdate();
+//			// 6. 표시 또는 담기
+//			//System.out.println("게시판 등록 DB 처리 완료");
+//		} catch (Exception e) {
+//			// 개발자를 위한 코드
+//			e.printStackTrace();
+//			throw new Exception("게시판 글등록 DB 처리 중 오류. - " + e.getMessage());
+//		} finally {
+//			try {
+//				// 7. 닫기
+//				//  - commit 까지 완료하고 나온다. - auto commit
+//				if(con != null) con.close();
+//				if(pstmt != null) pstmt.close();
+//			} catch (Exception e) {
+//				// 개발자를 위한 코드
+//				e.printStackTrace();
+//				throw new Exception("게시판 글등록 객체를 닫는 중 오류. - " + e.getMessage());
+//			}
+//		}
+//		
+//		return result;
+//	}
 
 	
 	
@@ -601,13 +602,14 @@ public class BoardDAO {
 			con = DB.getConnection();
 			//System.out.println("연결 완료");
 			// 3. SQL 작성
-			String sql = "INSERT INTO board(no, title, content, id) VALUES (board_seq.NEXTVAL, ?, ?, ?)";
+			String sql = "INSERT INTO board(no, title, content, id, category) VALUES (board_seq.NEXTVAL, ?, ?, ?, ?)";
 			
 			// 4. 실행객체 & 데이터 세팅
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, vo.getTitle());
 			pstmt.setString(2, vo.getContent());
 			pstmt.setString(3, vo.getId());
+			pstmt.setString(4, vo.getCategory());
 
 			
 			System.out.println("BoardDAO.write().service" +sql);

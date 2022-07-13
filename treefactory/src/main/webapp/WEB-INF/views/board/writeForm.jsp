@@ -74,6 +74,17 @@ function sendData() {
 	    <label for="images">이미지</label>
 	    <input type="file" class="form-control" id="images" name="images" multiple>
 	  </div>
+	  <div>
+	  	<select name="category" class="form-contorl">
+<!-- 	  		<option value="사는얘기" selected="selected">사는얘기</option> -->
+<!-- 	  		<option value="공지사항" >공지사항</option> -->
+	  		<option value="정기모임/스터디" selected="selected">정기모임/스터디</option>
+	  		<option value="포럼" >포럼</option>
+<!-- 	  		<option value="IT행사" >IT행사</option> -->
+<!-- 	  		<option value="기술 서적 리뷰" >기술 서적 리뷰</option> -->
+<!-- 	  		<option value="IT학원/홍보" >IT학원/홍보</option> -->
+	  	</select>
+	  </div>
 			<!-- submit : 데이터 전달 , reset : 처음상태, button: 동작이없다(js로 동작만들어서 사용가능) -->
 			<button type="submit" onclick="return sendData();" class="btn btn-default">등록</button>
 			<button type="reset" class="btn btn-info">새로고침</button>
